@@ -1,10 +1,3 @@
-# Distributed with a free-will license.
-# Use it any way you want, profit or free, provided it fits in the licenses of its associated works.
-# TCS34725
-# This code is designed to work with the TCS34725_I2CS I2C Mini Module available from ControlEverything.com.
-# https://www.controleverything.com/products
-# NT
-
 import smbus
 import RPi.GPIO as GPIO
 from datetime import datetime
@@ -22,8 +15,6 @@ capteur[1] = smbus.SMBus(3)
 capteur[2] = smbus.SMBus(4)
 capteur[3] = smbus.SMBus(5)
 capteur[4] = smbus.SMBus(6)
-
-# ds3231 = SDL_DS3231.SDL_DS3231(1, 0x68)
 
 # I2C Address of the device
 TCS34725_DEFAULT_ADDRESS = 0x29
@@ -69,7 +60,7 @@ TCS34725_REG_CONTROL_AGAIN_4 = 0x01  # 4x Gain
 TCS34725_REG_CONTROL_AGAIN_16 = 0x02  # 16x Gain
 TCS34725_REG_CONTROL_AGAIN_60 = 0x03  # 60x Gain
 
-# def function
+# Def function
 
 
 def enable_selection(sensor):
@@ -109,7 +100,7 @@ def readluminance(sensor):
 
     return {'c': cData, 'r': red, 'g': green, 'b': blue, 'l': luminance}
 
-# function that generate the name of the csv file with the current date
+# Generate the name of the csv file with the current date
 
 
 def name():
@@ -122,7 +113,7 @@ def name():
 
     return name
 
-# function that get the date and return the desired values
+# Get the date and return the desired values
 
 
 def get_time():
@@ -136,7 +127,7 @@ def get_time():
 
     return {'year': year, 'month': month, 'day': day, 'hour': hour, 'min': minute, 'sec': second}
 
-# function that convert the hexadecimal gain in a digital one (used in flux() function)
+# Convert the hexadecimal gain in a digital one (used in flux() function)
 
 
 def num_gain(current_gain):
@@ -153,7 +144,7 @@ def num_gain(current_gain):
 
     return gain
 
-# function that convert the hexadecimal integration time in a digital one (used in flux() function)
+# Convert the hexadecimal integration time in a digital one (used in flux() function)
 
 
 def num_acquisition_time(current_acquisition_time):
@@ -172,7 +163,7 @@ def num_acquisition_time(current_acquisition_time):
 
     return acquisition_time
 
-# function that calculate the color temperature (and return N/A if there is a /0)
+# Calculate the color temperature
 
 
 def colour_temperature(r, g, b, c):
@@ -207,7 +198,7 @@ def colour_temperature(r, g, b, c):
 
     return colour_temp
 
-# function that calculate de flux (and return "N/A" if there is a /0)
+# Calculate the flux
 
 
 def get_flux(lux, Ga, AT):
@@ -224,7 +215,7 @@ def get_flux(lux, Ga, AT):
 
     return flux
 
-# function that write everything in the .csv file
+# Write everything in the .csv file
 
 
 def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail):
@@ -233,7 +224,7 @@ def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, 
                     lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail])
 
 
-# function that verify if the data is over exposed, under exposed or correctly exposed and return the corresponding tail
+# Check if the data is over exposed, under exposed or correctly exposed and return the corresponding tail
 def get_tail(red, green, blue, clear):
     tail = "--"
 
@@ -246,7 +237,7 @@ def get_tail(red, green, blue, clear):
 
     return tail
 
-# function that correct the gain and the integration time for a specific red, green, blue and clear color
+# Correction of gain and integration time
 
 
 def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time):
@@ -335,9 +326,7 @@ def largest(arr):
 
     max = num[0]
 
-# Traverse array elements from second
-# and compare every element with
-# current max
+# Traverse array elements from second and compare every element with current max
     for i in range(5):
         if num[i] > max:
             max = num[i]
@@ -353,15 +342,19 @@ bluePin = 37
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BOARD)
 
-# button GPIO septup
-GPIO.setup(3, GPIO.OUT)
-GPIO.setup(5, GPIO.OUT)
-GPIO.setup(7, GPIO.OUT)
+# button GPIO setup
+GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
-# UBS gpio setup
+# led GPIO setup
+GPIO.setup(redPin, GPIO.OUT)
+GPIO.setup(greenPin, GPIO.OUT)
+GPIO.setup(bluePin, GPIO.OUT)
+
+# UPS gpio setup
 GPIO.setup(11, GPIO.IN)
 
-# all colors LED functions
+# All colors LED functions
 
 
 def blink(pin):
@@ -369,8 +362,6 @@ def blink(pin):
 
 
 def turnOff(pin):
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(pin, GPIO.OUT)
     GPIO.output(pin, GPIO.LOW)
 
 
@@ -408,26 +399,6 @@ def yellowOff():
     turnOff(greenPin)
 
 
-def cyanOn():
-    blink(greenPin)
-    blink(bluePin)
-
-
-def cyanOff():
-    turnOff(greenPin)
-    turnOff(bluePin)
-
-
-def magentaOn():
-    blink(redPin)
-    blink(bluePin)
-
-
-def magentaOff():
-    turnOff(redPin)
-    turnOff(bluePin)
-
-
 def whiteOn():
     blink(redPin)
     blink(greenPin)
@@ -444,6 +415,7 @@ def whiteOff():
 
 def ups():
     global end
+
     while end == 0:
         if GPIO.input(11) == 1:
             print("WARNING, Lancube has no more power, shutting down in 60 sec if power is not recovered")
@@ -458,6 +430,8 @@ def ups():
                     print("waiting for power recovery...")
                     time.sleep(1)
 
+# Get gps position
+
 
 def getPositionData():
     global end
@@ -466,10 +440,12 @@ def getPositionData():
     global alt
     global nbSats
     global times
-    print("Application started!")
+
     SERIAL_PORT = "/dev/ttyACM0"
-    gps = serial.Serial(SERIAL_PORT, baudrate=9600, timeout=0.5)
-    print("serial open")
+    try:
+        gps = serial.Serial(SERIAL_PORT, baudrate=9600, timeout=0.5)
+    except serial.SerialException:
+        print("No GPS module found...")
 
     while end == 0:
         try:
@@ -523,13 +499,23 @@ def getPositionData():
         except:
             lat[0] = 0
             lon[0] = 0
-            alt[0] = 99
-            lat[1] = 99
-            lon[1] = 99
-            alt[1] = 99
-            nbSats = 99
+            alt[0] = 0
+            lat[1] = 0
+            lon[1] = 0
+            alt[1] = 0
+            nbSats = 0
 
-            print("ERROR")
+            time.sleep(0.9)
+            try:
+                if SERIAL_PORT == "/dev/ttyACM0":
+                    SERIAL_PORT = "/dev/ttyACM1"
+                elif SERIAL_PORT == "/dev/ttyACM1":
+                    SERIAL_PORT = "/dev/ttyACM0"
+
+                gps = serial.Serial(SERIAL_PORT, baudrate=9600, timeout=0.5)
+
+            except serial.SerialException:
+                print("No GPS module found...")
 
 
 # initialisation
@@ -539,14 +525,7 @@ yellowOn()
 
 # name of the file
 name1 = name()
-
-# TEMPORARY
-data = open('/var/www/html/data/' + name1, 'w', newline='')
-
-# Declaration of writer
-writer = csv.writer(data)
-writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
-                "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+name1_update = name1
 
 # GS = Gain Sensor (lowest possible)
 GS = [0, 0, 0, 0, 0]
@@ -572,12 +551,13 @@ WTS[2] = TCS34725_REG_WTIME_4_8
 WTS[3] = TCS34725_REG_WTIME_4_8
 WTS[4] = TCS34725_REG_WTIME_4_8
 
-# TEMPORARY (suite)
-data.close()
 data = open('/var/www/html/data/' + name1, 'a')
 writer = csv.writer(data)
+if os.stat('/var/www/html/data/' + name1).st_size <= 0:
+    writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
+                    "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
 
-# initial value variables
+# Initialize values of the variables
 tail = ["--", "--", "--", "--", "--"]
 button_status = 0
 end = 0
@@ -592,18 +572,25 @@ lon = [0, 0]
 alt = [0, 0]
 nbSats = 0
 times = [0, 0]
-# gps thread initialisation
+
+# Gps thread initialisation
 tGps = threading.Thread(target=getPositionData, name="Gps thread")
 tGps.start()
 tUps = threading.Thread(target=ups, name="Ups thread")
 tUps.start()
 
-# button GPIO setup
-GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(19, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-
 # Main loop
 while end == 0:
+    # If the day change, create a new file with the correct name
+    if name1_update != name1:
+        data.close()
+        data = open('/var/www/html/data/' + name1_update, 'a')
+        writer = csv.writer(data)
+        writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
+                         "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+        name1 = name1_update
+
+    name1_update = name()
 
     # Look for button status
     if GPIO.input(21) == 1:
@@ -685,10 +672,11 @@ while end == 0:
         end = 1
 
 # Shutdown sequence
-GPIO.cleanup()
-data.close()
+print("Shutdown")
 whiteOff()
 redOn()
-print("Shutdown")
+data.close()
+# Waiting for the treads to end before cleaning GPIO
 time.sleep(1)
-# os.system("sudo shutdown -h now")
+GPIO.cleanup()
+os.system("sudo shutdown -h now")
