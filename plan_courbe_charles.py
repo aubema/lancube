@@ -2,52 +2,68 @@ import scipy.linalg
 import scipy.optimize
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
-
-# Import plotly package
 import plotly.graph_objs as go
 import numpy as np
 import pandas as pd
 
-# Read file of data given by the LAN3
+##Read file of data given by the LAN3
 File = pd.read_csv("Final_used_Data.csv", sep=",")
-x = np.array(File['R/G'])
-y = np.array(File['B/G'])
+# x = np.array(File['R/G'])
+# y = np.array(File['B/G'])
 z = np.array(File['MSI'])
+R = np.array(File['R'])
+G = np.array(File['G'])
+B = np.array(File['B'])
+#data = np.c_[x, y, z]
 
-data = np.c_[x, y, z]
+##filter values with minimum threshold (low G values give errors on MSI because of uncertainty)
+threshold = 4000
+Rtind=np.argwhere(R>threshold)
+Gtind=np.argwhere(G>threshold)
+Btind=np.argwhere(B>threshold)
+Rtind=np.argwhere(R<Rtind.max()*0.5)
+Btind=np.argwhere(B<Btind.max()*0.5)
+rts=np.unique(np.concatenate((Rtind,Gtind,Btind), axis=None))
 
-# regular grid covering the domain of the data
+Rt=R[rts]
+Gt=G[rts]
+Bt=B[rts]
+MSIt=z[rts]
+
+data=np.c_[Bt/Gt,Rt/Gt,MSIt]
+
+##regular grid covering the domain of the data
 mn = np.min(data[:,:2], axis=0)
 mx = np.max(data[:,:2], axis=0)
-X, Y = np.meshgrid(np.linspace(mn[0], mx[0], 20), np.linspace(mn[1], mx[1], 20))
+X, Y = np.meshgrid(np.linspace(mn[0], mx[0], 30), np.linspace(mn[1], mx[1], 30))
 XX = X.flatten()
 YY = Y.flatten()
 
-#define order of the equation to fit. all members must be written by np.prod products
-A = np.c_[np.ones(data.shape[0]),                               #order 0: C
-        data[:, :2],                                            #order 1: x,y
-        np.prod((x,y), axis=0),data[:, :2] ** 2,                #order 2: x*y, x^2, y^2
-        np.prod((x,x,y), axis=0),                               #order 3: x^2*y, y^2*x, x^3, y^3
-        np.prod((y,y,x), axis=0),
+##define order of the equation to fit. all members must be written by np.prod products
+A = np.c_[np.ones(data.shape[0]),                                               #order 0: C
+        data[:, :2],                                                            #order 1: x,y
+        np.prod((data[:,0],data[:,1]), axis=0),data[:, :2] ** 2,                #order 2: x*y, x^2, y^2
+        np.prod((data[:,0],data[:,0],data[:,1]), axis=0),                       #order 3: x^2*y, y^2*x, x^3, y^3
+        np.prod((data[:,0],data[:,1],data[:,1]), axis=0),
         data[:, :2] ** 3]                                       
                                                 
 
 
-C, _, _, _ = scipy.linalg.lstsq(A, z)
+C, res, _, _ = np.linalg.lstsq(A, MSIt)
 print(C)
 
 
-# evaluate it on a grid
+##evaluate it on a grid
 Z = np.dot(np.c_[np.ones(XX.shape),
                  XX, YY, 
                  XX * YY, XX ** 2, YY ** 2,
                  XX**2*YY, XX*YY**2, XX**3, YY**3], C).reshape(X.shape)
 
-# plot points and fitted surface using Matplotlib
+##plot points and fitted surface using Matplotlib
 fig = plt.figure(figsize=(10, 10))
 ax = fig.gca(projection='3d')
 ax.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.2)
-ax.scatter(x, y, z, c='r', s=50)
+ax.scatter(data[:,0],data[:,1],data[:,2], c='r', s=50)
 plt.xlabel('R/G')
 plt.ylabel('B/G')
 ax.set_zlabel('MSI')
@@ -61,14 +77,21 @@ def Msi_Lan3(x,y,coeff):
 def lin_func(x,a,b):
     return a*x+b
 
-msi_lan3=Msi_Lan3(x,y,C)
+msi_lan3=Msi_Lan3(data[:,0],data[:,1],C)
 
-Clin, _ = scipy.optimize.curve_fit(lin_func, z, msi_lan3)
+Clin, _ = scipy.optimize.curve_fit(lin_func, MSIt, msi_lan3, p0=[1,0])
 
 
-fig,ax = plt.subplots()
-ax.scatter(z, msi_lan3, label='lan3 MSI-3rd order')
-ax.plot(z, lin_func(z,Clin[0],Clin[1]), c='k', label='linear fit')
-ax.text(0, 0.5, 'm=ax+b \n a={:.2f} \n b={:.2f}'.format(Clin[0],Clin[1]), fontsize=20)
-ax.legend(loc='lower right')
+fig,ax = plt.subplots(1,2)
+ax[0].scatter(MSIt, msi_lan3, label='lan3 MSI-3rd order')
+ax[0].plot(MSIt, lin_func(MSIt,Clin[0],Clin[1]), c='k', label='linear fit')
+ax[0].text(0, 0.5, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold={}'.format(Clin[0],Clin[1], threshold), fontsize=20)
+ax[0].legend(loc='lower right')
+ax[1].scatter(MSIt, msi_lan3-MSIt, label='Residues')
+#ax[1].plot(MSIt, lin_func(MSIt,Clin[0],Clin[1]), c='k', label='linear fit')
+#ax[1].text(0, 0.5, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold={}'.format(Clin[0],Clin[1], threshold), fontsize=20)
+ax[1].legend(loc='lower right')
+
 plt.show()
+
+
