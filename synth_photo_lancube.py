@@ -30,6 +30,13 @@ spectra_resps = np.array([np.multiply(spectra[:,:,1],resps_interp[0]),
 						np.multiply(spectra[:,:,1],resps_interp[2]),
 						np.multiply(spectra[:,:,1],resps_interp[3])])
 
+# Compute integrals of spectra_resps for R,G,B,C, R/G, B/G, R/C,G/C,B/C color index
+spectra_rgbc = np.sum(spectra_resps,axis=2).T
+
+R,G,B,C=[np.array([spectra_rgbc[:,i]]).T for i in np.arange(spectra_rgbc.shape[1])]
+
+spectra_int = np.concatenate((spectra_rgbc,R/G,B/G,R/C,G/C,B/C),axis=1)
+
 # Plot an example normalized spectrum with normalized responses filters applied
 plt.figure()
 num = 83
@@ -107,5 +114,6 @@ plt.ylabel('Counts')
 plt.legend()
 
 # Save data to file
-z=np.vstack((np.array(fnames)[mask],indices_mask[:,0],indices_mask[:,1],indices_mask[:,2])).T
-np.savetxt('computed_indices.csv', z, header='fname, MSI, SLI, IPI, ', delimiter=',', fmt='%s')
+z=np.vstack((indices_mask[:,0],indices_mask[:,1],indices_mask[:,2],np.array(fnames)[mask])).T
+final=np.concatenate((spectra_int[mask],z),axis=1)
+np.savetxt('computed_indices.csv', final, comments='', header='R,G,B,C,R/G,B/G,R/C,B/C,G/C,MSI,SLI,IPI,fname', delimiter=',', fmt='%s')
