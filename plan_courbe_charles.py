@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 ##Read file of data given by the LAN3
-File = pd.read_csv("Final_used_Data.csv", sep=",")
+File = pd.read_csv("computed_indices.csv", sep=",")
 # x = np.array(File['R/G'])
 # y = np.array(File['B/G'])
 z = np.array(File['MSI'])
@@ -17,7 +17,7 @@ B = np.array(File['B'])
 #data = np.c_[x, y, z]
 
 ##filter values with minimum threshold (low G values give errors on MSI because of uncertainty)
-threshold = 4000
+threshold = 1000
 Rtind=np.argwhere(R>threshold)
 Gtind=np.argwhere(G>threshold)
 Btind=np.argwhere(B>threshold)
@@ -60,13 +60,16 @@ Z = np.dot(np.c_[np.ones(XX.shape),
                  XX**2*YY, XX*YY**2, XX**3, YY**3], C).reshape(X.shape)
 
 ##plot points and fitted surface using Matplotlib
-fig = plt.figure(figsize=(10, 10))
+fig = plt.figure(figsize=(5, 5))
 ax = fig.gca(projection='3d')
 ax.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.2)
-ax.scatter(data[:,0],data[:,1],data[:,2], c='r', s=50)
+ax.scatter(data[:176,0],data[:176,1],data[:176,2], c='b', s=20, label='LSPDD')
+ax.scatter(data[176:,0],data[176:,1],data[176:,2], c='r', s=20, label='Jo')
+ax.set_zlim(0,1)
 plt.xlabel('R/G')
 plt.ylabel('B/G')
 ax.set_zlabel('MSI')
+ax.legend()
 plt.show()
 
 
@@ -83,11 +86,15 @@ Clin, _ = scipy.optimize.curve_fit(lin_func, MSIt, msi_lan3, p0=[1,0])
 
 
 fig,ax = plt.subplots(1,2)
-ax[0].scatter(MSIt, msi_lan3, label='lan3 MSI-3rd order')
+ax[0].scatter(MSIt[:176], msi_lan3[:176], label='LSPDD', s=0.75, c='b')
+ax[0].scatter(MSIt[176:], msi_lan3[176:], label='Jo', s=0.75, c='r')
 ax[0].plot(MSIt, lin_func(MSIt,Clin[0],Clin[1]), c='k', label='linear fit')
-ax[0].text(0, 0.5, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold={}'.format(Clin[0],Clin[1], threshold), fontsize=20)
+ax[0].text(0, 1.2, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold={}'.format(Clin[0],Clin[1], threshold), fontsize=10)
 ax[0].legend(loc='lower right')
-ax[1].scatter(MSIt, msi_lan3-MSIt, label='Residues')
+ax[0].set_title('Lan3 MSI-3rd order')
+ax[1].scatter(MSIt[:176], msi_lan3[:176]-MSIt[:176], label='LSPDD', s=0.75, c='b')
+ax[1].scatter(MSIt[176:], msi_lan3[176:]-MSIt[176:], label='Jo', s=0.75, c='r')
+ax[1].set_title('Residues')
 #ax[1].plot(MSIt, lin_func(MSIt,Clin[0],Clin[1]), c='k', label='linear fit')
 #ax[1].text(0, 0.5, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold={}'.format(Clin[0],Clin[1], threshold), fontsize=20)
 ax[1].legend(loc='lower right')
