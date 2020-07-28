@@ -19,7 +19,7 @@ fnames_jo = glob('spectra_johanne/*/*.IRR')
 spectra_ammar = np.array([pd.read_csv(fname, skipfooter=1, engine='python').values for fname in fnames_ammar])
 spectra_jo = np.array([pd.read_csv(fname, sep=' ', usecols=[1,3], skipfooter=1, engine='python').values for fname in fnames_jo])
 
-#### AMMAR SPECTRA NOT INCLUDED, TOO SPARSE DATA!!
+#### AMMAR SPECTRA NOT INCLUDED, DATA TOO SPARSE!!
 
 # Find spectra with keyword (INC, LED, MH, ...)
 #incands = spectra[np.argwhere(['INC' in fname for fname in fnames])]
@@ -83,7 +83,6 @@ dl = msas[1,1]-msas[0,1]
 
 # Normalize D65 (Denominator of the AuRobyfaj equation)
 d65_norm = msasi/(dl*np.sum(msasi*photopic[:,1]))
-
 
 # Function to compute MSI, SLI and IPI indices
 def CalcIndices(spectrum):
