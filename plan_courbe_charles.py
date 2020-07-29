@@ -10,12 +10,12 @@ import pandas as pd
 File = pd.read_csv("computed_indices.csv", sep=",")
 # x = np.array(File['R/G'])
 # y = np.array(File['B/G'])
-MSI = np.array(File['MSI'])
 R = np.array(File['R'])
 G = np.array(File['G'])
 B = np.array(File['B'])
 Clear = np.array(File['C'])
-#data = np.c_[x, y, z]
+MSI = np.array(File['MSI'])
+SLI = np.array(File['SLI'])
 
 ##filter values with minimum threshold (low G values give errors on MSI because of uncertainty)
 threshold = 0
@@ -32,9 +32,14 @@ Rt=R[rts]
 Gt=G[rts]
 Bt=B[rts]
 MSIt=MSI[rts]
+SLIt=SLI[rts]
 
-data=np.c_[Bt/Gt,Rt/Gt,MSIt]
-#data=np.c_[Bt/Cleart,Rt/Cleart,MSIt]
+
+# Choose to compute for MSI, SLI or IPI
+#data=np.c_[Bt/Gt,Rt/Gt,MSIt]
+#indice='MSI'
+data=np.c_[Bt/Gt,Rt/Gt,SLIt]
+indice='SLI'
 
 
 ##regular grid covering the domain of the data
@@ -54,7 +59,7 @@ A = np.c_[np.ones(data.shape[0]),                                               
                                                 
 
 
-C, res, _, _ = np.linalg.lstsq(A, MSIt)
+C, res, _, _ = np.linalg.lstsq(A, data[:,2])
 print(C)
 
 
@@ -73,7 +78,7 @@ ax.scatter(data[176:,0],data[176:,1],data[176:,2], c='r', s=20, label='Jo')
 ax.set_zlim(0,1)
 plt.xlabel('R/G')
 plt.ylabel('B/G')
-ax.set_zlabel('MSI')
+ax.set_zlabel(indice)
 ax.legend()
 plt.show()
 
@@ -87,21 +92,21 @@ def lin_func(x,a,b):
 
 msi_lan3=Msi_Lan3(data[:,0],data[:,1],C)
 
-Clin, _ = scipy.optimize.curve_fit(lin_func, MSIt, msi_lan3, p0=[1,0])
+Clin, _ = scipy.optimize.curve_fit(lin_func, data[:,2], msi_lan3, p0=[1,0])
 
 
 fig,ax = plt.subplots(1,2)
-ax[0].scatter(MSIt[:176], msi_lan3[:176], label='LSPDD', s=0.75, c='b')
-ax[0].scatter(MSIt[176:], msi_lan3[176:], label='Barcelone', s=0.75, c='r')
-ax[0].plot(MSIt, lin_func(MSIt,Clin[0],Clin[1]), c='k', label='linear fit')
-ax[0].text(0, 0.70, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold \n on R,G,B={:.2E}'.format(Clin[0],Clin[1], threshold), fontsize=10)
+ax[0].scatter(data[:,2][:176], msi_lan3[:176], label='LSPDD', s=0.75, c='b')
+ax[0].scatter(data[:,2][176:], msi_lan3[176:], label='Barcelone', s=0.75, c='r')
+ax[0].plot(data[:,2], lin_func(data[:,2],Clin[0],Clin[1]), c='k', label='linear fit', linewidth=0.2)
+ax[0].text(0.05, 0.85, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold \n on R,G,B={:.2E}'.format(Clin[0],Clin[1], threshold), fontsize=10)
 ax[0].legend(loc='lower right')
-ax[0].set_title('Lan3 MSI-3rd order')
-ax[1].scatter(MSIt[:176], msi_lan3[:176]-MSIt[:176], label='LSPDD', s=0.75, c='b')
-ax[1].scatter(MSIt[176:], msi_lan3[176:]-MSIt[176:], label='Barcelone', s=0.75, c='r')
+ax[0].set_title('Lan3 ' + indice + ' (3rd order)')
+ax[0].set_xlim(0,1.1)
+ax[0].set_ylim(0,1.1)
+ax[1].scatter(data[:,2][:176], msi_lan3[:176]-data[:,2][:176], label='LSPDD', s=0.75, c='b')
+ax[1].scatter(data[:,2][176:], msi_lan3[176:]-data[:,2][176:], label='Barcelone', s=0.75, c='r')
 ax[1].set_title('Residues')
-#ax[1].plot(MSIt, lin_func(MSIt,Clin[0],Clin[1]), c='k', label='linear fit')
-#ax[1].text(0, 0.5, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold={}'.format(Clin[0],Clin[1], threshold), fontsize=20)
 ax[1].legend(loc='lower right')
 plt.show()
 
