@@ -7,6 +7,8 @@ import numpy as np
 import pandas as pd
 
 ##Read file of data given by the LAN3
+#File = pd.read_csv("computed_indices.csv", sep=",")
+
 File = pd.read_csv("computed_indices.csv", sep=",")
 # x = np.array(File['R/G'])
 # y = np.array(File['B/G'])
@@ -36,10 +38,10 @@ SLIt=SLI[rts]
 
 
 # Choose to compute for MSI, SLI or IPI
-#data=np.c_[Bt/Gt,Rt/Gt,MSIt]
-#indice='MSI'
-data=np.c_[Bt/Gt,Rt/Gt,SLIt]
-indice='SLI'
+data=np.c_[Bt/Gt,Rt/Gt,MSIt]
+indice='MSI'
+# data=np.c_[Bt/Gt,Rt/Gt,SLIt]
+# indice='SLI'
 
 
 ##regular grid covering the domain of the data
@@ -73,8 +75,8 @@ Z = np.dot(np.c_[np.ones(XX.shape),
 fig = plt.figure(figsize=(7, 7))
 ax = fig.gca(projection='3d')
 ax.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.2)
-ax.scatter(data[:176,0],data[:176,1],data[:176,2], c='b', s=20, label='LSPDD')
-ax.scatter(data[176:,0],data[176:,1],data[176:,2], c='r', s=20, label='Jo')
+ax.scatter(data[:258,0],data[:258,1],data[:258,2], c='b', s=20, label='LSPDD')
+ax.scatter(data[258:,0],data[258:,1],data[258:,2], c='r', s=20, label='In-situ')
 ax.set_zlim(0,1)
 plt.xlabel('R/G')
 plt.ylabel('B/G')
@@ -96,18 +98,19 @@ Clin, _ = scipy.optimize.curve_fit(lin_func, data[:,2], msi_lan3, p0=[1,0])
 
 
 fig,ax = plt.subplots(1,2)
-ax[0].scatter(data[:,2][:176], msi_lan3[:176], label='LSPDD', s=0.75, c='b')
-ax[0].scatter(data[:,2][176:], msi_lan3[176:], label='Barcelone', s=0.75, c='r')
+ax[0].scatter(data[:,2][:258], msi_lan3[:258], label='LSPDD', s=0.75, c='b')
+ax[0].scatter(data[:,2][258:], msi_lan3[258:], label='In-situ', s=0.75, c='r')
 ax[0].plot(data[:,2], lin_func(data[:,2],Clin[0],Clin[1]), c='k', label='linear fit', linewidth=0.2)
-ax[0].text(0.05, 0.85, 'm=ax+b \n a={:.2f} \n b={:.2f} \n threshold \n on R,G,B={:.2E}'.format(Clin[0],Clin[1], threshold), fontsize=10)
+ax[0].text(0.05, 0.85, 'm=ax+b \n a={:.2f} \n b={:.2f}'.format(Clin[0],Clin[1]), fontsize=10)
 ax[0].legend(loc='lower right')
 ax[0].set_title('Lan3 ' + indice + ' (3rd order)')
-ax[0].set_xlim(0,1.1)
-ax[0].set_ylim(0,1.1)
-ax[1].scatter(data[:,2][:176], msi_lan3[:176]-data[:,2][:176], label='LSPDD', s=0.75, c='b')
-ax[1].scatter(data[:,2][176:], msi_lan3[176:]-data[:,2][176:], label='Barcelone', s=0.75, c='r')
+ax[0].set_xlim(0,1)
+ax[0].set_ylim(0,1)
+ax[1].scatter(data[:,2][:258], msi_lan3[:258]-data[:,2][:258], label='LSPDD', s=0.75, c='b')
+ax[1].scatter(data[:,2][258:], msi_lan3[258:]-data[:,2][258:], label='In-situ', s=0.75, c='r')
+ax[1].plot(np.linspace(0,1,data[:,2].shape[0]),np.zeros(data[:,2].shape[0]), linewidth=0.5, linestyle='--')
 ax[1].set_title('Residues')
-ax[1].legend(loc='lower right')
+#ax[1].legend(loc='lower right')
 plt.show()
 
 
