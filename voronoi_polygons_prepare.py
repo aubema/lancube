@@ -54,6 +54,11 @@ IPI_S5 = ComputeIndex(data_S5[:,2]/data_S5[:,3], data_S5[:,4]/data_S5[:,3], coef
 indices_S3 = np.array([data_S3[:,0],data_S3[:,1], MSI_S3]).T
 indices_S5 = np.array([data_S5[:,0],data_S5[:,1], MSI_S5]).T
 
+indices_S3_clean_lat = np.delete(indices_S3, np.where(indices_S3[:,0]==0), axis=0)
+indices_S3_clean = np.delete(indices_S3_clean_lat, np.where(indices_S3[:,1]==0), axis=0)
+indices_S5_clean_lat = np.delete(indices_S5, np.where(indices_S5[:,0]==0), axis=0)
+indices_S5_clean = np.delete(indices_S5_clean_lat, np.where(indices_S5[:,1]==0), axis=0)
+
 # Save data to file
 
-np.savetxt('street_measurements_MSI.csv', np.vstack([indices_S3, indices_S5]), delimiter=',', header='lat,lon,MSI', comments='', fmt='%10.5f')
+np.savetxt('street_measurements_MSI.csv', np.vstack([indices_S3_clean, indices_S5_clean]), delimiter=',', header='lat,lon,MSI', comments='', fmt='%10.5f')
