@@ -25,8 +25,8 @@ coeff2 = [0.0683509,0.558028,0.370345,-1.21431, -0.61563, 0.17249, -0.063395, 1.
 
 
 def MSI(x,y, coeff):
-    return coeff[0]*(x**3) + coeff[1]*(y**3) + coeff2[2]*(y*(x**2)) + coeff2[3]*(x*(y**2)) + coeff2[4]*(x**2)+\
-           coeff[5]*(y**2) + coeff[6]*(x*y) + coeff2[7]*x + coeff2[8]*y + coeff2[9]
+    return coeff[0]*(x**3) + coeff[1]*(y**3) + coeff[2]*(y*(x**2)) + coeff[3]*(x*(y**2)) + coeff[4]*(x**2)+\
+           coeff[5]*(y**2) + coeff[6]*(x*y) + coeff[7]*x + coeff[8]*y + coeff[9]
 
 
 M = MSI(R/G, B/G, coeff2)

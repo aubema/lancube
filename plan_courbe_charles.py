@@ -39,7 +39,7 @@ SLIt=SLI[rts]
 
 # Choose to compute for MSI, SLI or IPI
 data=np.c_[Bt/Gt,Rt/Gt,MSIt]
-indice='MSI'
+indice='IPI'
 # data=np.c_[Bt/Gt,Rt/Gt,SLIt]
 # indice='SLI'
 
@@ -76,12 +76,12 @@ fig = plt.figure(figsize=(7, 7))
 ax = fig.gca(projection='3d')
 ax.plot_surface(X, Y, Z, rstride=1, cstride=1, alpha=0.2)
 ax.scatter(data[:258,0],data[:258,1],data[:258,2], c='b', s=20, label='LSPDD')
-ax.scatter(data[258:,0],data[258:,1],data[258:,2], c='r', s=20, label='In-situ')
-ax.set_zlim(0,1)
+ax.scatter(data[258:,0],data[258:,1],data[258:,2], c='b', s=20, label='In-situ')
+ax.set_zlim(0,1.2)
 plt.xlabel('R/G')
 plt.ylabel('B/G')
 ax.set_zlabel(indice)
-ax.legend()
+#ax.legend()
 plt.show()
 
 
@@ -99,18 +99,21 @@ Clin, _ = scipy.optimize.curve_fit(lin_func, data[:,2], msi_lan3, p0=[1,0])
 
 fig,ax = plt.subplots(1,2)
 ax[0].scatter(data[:,2][:258], msi_lan3[:258], label='LSPDD', s=0.75, c='b')
-ax[0].scatter(data[:,2][258:], msi_lan3[258:], label='In-situ', s=0.75, c='r')
+ax[0].scatter(data[:,2][258:], msi_lan3[258:], label='In-situ', s=0.75, c='b')
 ax[0].plot(data[:,2], lin_func(data[:,2],Clin[0],Clin[1]), c='k', label='linear fit', linewidth=0.2)
-ax[0].text(0.05, 0.85, 'm=ax+b \n a={:.2f} \n b={:.2f}'.format(Clin[0],Clin[1]), fontsize=10)
-ax[0].legend(loc='lower right')
-ax[0].set_title('Lan3 ' + indice + ' (3rd order)')
+#ax[0].text(0.05, 0.85, 'm=ax+b \n a={:.2f} \n b={:.2f}'.format(Clin[0],Clin[1]), fontsize=10)
+#ax[0].legend(loc='lower right')
+#ax[0].set_title('Lan3 ' + indice + ' (3rd order)')
 ax[0].set_xlim(0,1)
 ax[0].set_ylim(0,1)
 ax[1].scatter(data[:,2][:258], msi_lan3[:258]-data[:,2][:258], label='LSPDD', s=0.75, c='b')
-ax[1].scatter(data[:,2][258:], msi_lan3[258:]-data[:,2][258:], label='In-situ', s=0.75, c='r')
+ax[1].scatter(data[:,2][258:], msi_lan3[258:]-data[:,2][258:], label='In-situ', s=0.75, c='b')
 ax[1].plot(np.linspace(0,1,data[:,2].shape[0]),np.zeros(data[:,2].shape[0]), linewidth=0.5, linestyle='--')
-ax[1].set_title('Residues')
+#ax[1].set_title('Residues')
+ax[1].set_xlim(0,1)
+ax[1].set_ylim(-0.15,0.15)
 #ax[1].legend(loc='lower right')
 plt.show()
 
+#to do : stdv
 
