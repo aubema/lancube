@@ -10,14 +10,14 @@ fnames_lspdd = glob('LSPDD/lampdump/*')
 
 # Load all spectra (MxNxL) files to array and response curves for lan3 (MxN)
 spectra = np.array([pd.read_csv(fname).values for fname in fnames_lspdd])
-resps = pd.read_csv('response_spectra_lancube.csv', sep=' ', header=None).values
+resps = pd.read_csv('toto.csv', sep=' ', header=0).values
 
 # Load empirical spectra, both ammar/adam and johanne's spectrometer measurements (stellarnet)
 # bad spectra already removed (well, needs to be confirmed by visual inspection)
 fnames_ammar = glob('spectra_ammar/*.csv')
 fnames_ammar.sort()
 fnames_jo = glob('spectra_johanne/*/*.IRR')
-spectra_ammar = np.array([pd.read_csv(fname, skipfooter=1, engine='python').values for fname in fnames_ammar])
+spectra_ammar = np.array([pd.read_csv(fname, sep=',', skipfooter=1, engine='python').values for fname in fnames_ammar])
 spectra_jo = np.array([pd.read_csv(fname, sep=' ', usecols=[1,3], skipfooter=1, engine='python').values for fname in fnames_jo])
 
 #### AMMAR SPECTRA NOT INCLUDED, DATA TOO SPARSE!!
