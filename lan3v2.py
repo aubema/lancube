@@ -16,12 +16,13 @@ import os
 from subprocess import check_call
 
 # Get I2C bus
-capteur1 = smbus.SMBus(3)
-capteur2 = smbus.SMBus(4)
-capteur3 = smbus.SMBus(5)
-capteur4 = smbus.SMBus(6)
-capteur5 = smbus.SMBus(7)
- 
+capteur = [0, 0, 0, 0, 0]
+capteur[0] = smbus.SMBus(7)
+capteur[1] = smbus.SMBus(3)
+capteur[2] = smbus.SMBus(4)
+capteur[3] = smbus.SMBus(5)
+capteur[4] = smbus.SMBus(6)
+
 # I2C Address of the device
 TCS34725_DEFAULT_ADDRESS = 0x29
  
@@ -202,7 +203,7 @@ def colour_temperature(r, g, b, c):
 	return colour_temp
 
 # function that calculate de flux (and return "N/A" if there is a /0)
-def flux(lux, Ga, AT):
+def get_flux(lux, Ga, AT):
 
 	flux = 0
 
@@ -220,11 +221,11 @@ def flux(lux, Ga, AT):
 def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail):
 	
 	
-	writer.writerow([sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail])
+	writer.writerow(["S" + str(sensor), year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail])
 	
 
 # function that verify if the data is over exposed, under exposed or correctly exposed and return the corresponding tail
-def tail(red, green, blue, clear):
+def get_tail(red, green, blue, clear):
 	tail = "--"
 
 	if ( red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000  ) or ( red == green and red == blue and red > 100 ):
@@ -294,6 +295,26 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
 		current_waiting_time = TCS34725_REG_WTIME_614_4
 
 	return {'c_g' : current_gain, 'c_at' : current_acquisition_time, 'c_wt' : current_waiting_time}
+
+def largest(arr):
+	num = [0, 0, 0, 0, 0]
+
+	num[0] = num_acquisition_time(arr[0])
+	num[1] = num_acquisition_time(arr[1])
+	num[2] = num_acquisition_time(arr[2])
+	num[3] = num_acquisition_time(arr[3])
+	num[4] = num_acquisition_time(arr[4])
+    # Initialize maximum element
+
+	max = num[0]
+  
+    # Traverse array elements from second
+    # and compare every element with 
+    # current max
+	for i in range(5):
+		if num[i] > max:
+			max = num[i]
+	return max
 
 # setup GPIO end pins for LED
 redPin = 3
@@ -387,25 +408,28 @@ writer = csv.writer(data)
 writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites", "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
 
 #GS = Gain Sensor (lowest possible)
-GS1 = TCS34725_REG_CONTROL_AGAIN_1
-GS2 = TCS34725_REG_CONTROL_AGAIN_1
-GS3 = TCS34725_REG_CONTROL_AGAIN_1
-GS4 = TCS34725_REG_CONTROL_AGAIN_1
-GS5 = TCS34725_REG_CONTROL_AGAIN_1
+GS = [0, 0, 0, 0, 0]
+GS[0] = TCS34725_REG_CONTROL_AGAIN_1
+GS[1] = TCS34725_REG_CONTROL_AGAIN_1
+GS[2] = TCS34725_REG_CONTROL_AGAIN_1
+GS[3] = TCS34725_REG_CONTROL_AGAIN_1
+GS[4] = TCS34725_REG_CONTROL_AGAIN_1
 
 #ATS = Acquisition Time Sensor (fastest possible)
-ATS1 = TCS34725_REG_ATIME_2_4
-ATS2 = TCS34725_REG_ATIME_2_4
-ATS3 = TCS34725_REG_ATIME_2_4
-ATS4 = TCS34725_REG_ATIME_2_4
-ATS5 = TCS34725_REG_ATIME_2_4
+ATS = [0, 0, 0, 0, 0]
+ATS[0] = TCS34725_REG_ATIME_2_4
+ATS[1] = TCS34725_REG_ATIME_2_4
+ATS[2] = TCS34725_REG_ATIME_2_4
+ATS[3] = TCS34725_REG_ATIME_2_4
+ATS[4] = TCS34725_REG_ATIME_2_4
 
 #WTS = Wainting Time Sensor (one step over ATS)
-WTS1 = TCS34725_REG_WTIME_4_8
-WTS2 = TCS34725_REG_WTIME_4_8
-WTS3 = TCS34725_REG_WTIME_4_8
-WTS4 = TCS34725_REG_WTIME_4_8
-WTS5 = TCS34725_REG_WTIME_4_8
+WTS = [0, 0, 0, 0, 0]
+WTS[0] = TCS34725_REG_WTIME_4_8
+WTS[1] = TCS34725_REG_WTIME_4_8
+WTS[2] = TCS34725_REG_WTIME_4_8
+WTS[3] = TCS34725_REG_WTIME_4_8
+WTS[4] = TCS34725_REG_WTIME_4_8
 
 #TEMPORARY (suite)
 data.close()
@@ -413,7 +437,7 @@ data = open('/home/pi/Capteurs/' + name1, 'a')
 writer = csv.writer(data)
 
 #initial value variables
-tail1 = ["--", "--", "--", "--", "--"]
+tail = ["--", "--", "--", "--", "--"]
 button_status = 0
 end = 0
 i = 0
@@ -435,143 +459,45 @@ while end == 0:
 	if button_status == 1:
 		print("-----------------------------data ", i+1, "------------------------------------")
 
-		enable_selection(capteur1)
-		time_selection(capteur1, ATS1, WTS1)
-		gain_selection(capteur1, GS1)
+		for a in range(5):
+			enable_selection(capteur[a])
+			time_selection(capteur[a], ATS[a], WTS[a])
+			gain_selection(capteur[a], GS[a])
 
-		lum = readluminance(capteur1)
-		time1 = get_time()
-		gps = get_location()
-		gain = num_gain(GS1)
-		acqt = num_acquisition_time(ATS1)
-		temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
-		tail1[0] = tail(lum['r'], lum['g'], lum['b'], lum['c'])
-		flux1 = flux(lum['l'], num_gain(GS1), num_acquisition_time(ATS1))
-		lux = "{:.2f}".format(lum['l'])
+			lum = readluminance(capteur[a])
+			time_str = get_time()
+			gps = get_location()
+			gain = num_gain(GS[a])
+			acqt = num_acquisition_time(ATS[a])
+			temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
+			tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
+			flux = get_flux(lum['l'], num_gain(GS[a]), num_acquisition_time(ATS[a]))
+			lux = "{:.2f}".format(lum['l'])
 
-		# write the line of the sensor 1 in the csv file
+			# write the line of the sensor 1 in the csv file
 		
-		write_data(writer, "S1", time1['year'], time1['month'], time1['day'], time1['hour'], time1['min'], time1['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux1, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail1[0])
+			write_data(writer, a+1, time_str['year'], time_str['month'], time_str['day'], time_str['hour'], time_str['min'], time_str['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[0])
 
-		# Correction of the gain and integration time for sensor 1
-		corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS1, ATS1, WTS1)
-		GS1 = corr['c_g']
-		ATS1 = corr['c_at']
-		WTS1 = corr['c_wt']
+			# Correction of the gain and integration time for sensor 1
+			corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
+			GS[a] = corr['c_g']
+			ATS[a] = corr['c_at']
+			WTS[a] = corr['c_wt']
 
-		# same thing for sensor 2
-		enable_selection(capteur2)
-		time_selection(capteur2, ATS2, WTS2)
-		gain_selection(capteur2, GS2)
-
-		lum = readluminance(capteur2)
-		time1 = get_time()
-		gps = get_location()
-		gain = num_gain(GS2)
-		acqt = num_acquisition_time(ATS2)
-		temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
-		tail1[1] = tail(lum['r'], lum['g'], lum['b'], lum['c'])
-		flux1 = flux(lum['l'], num_gain(GS2), num_acquisition_time(ATS2))
-		lux = "{:.2f}".format(lum['l'])
-
-		# write the line of the sensor 2 in the csv file
-		
-		write_data(writer, "S2", time1['year'], time1['month'], time1['day'], time1['hour'], time1['min'], time1['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux1, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail1[0])
-
-		# Correction of the gain and integration time for sensor 2
-		corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS2, ATS2, WTS2)
-		GS2 = corr['c_g']
-		ATS2 = corr['c_at']
-		WTS2 = corr['c_wt']
-
-		# same thing for sensor 3
-		enable_selection(capteur3)
-		time_selection(capteur3, ATS3, WTS3)
-		gain_selection(capteur3, GS3)
-
-		lum = readluminance(capteur3)
-		time1 = get_time()
-		gps = get_location()
-		gain = num_gain(GS3)
-		acqt = num_acquisition_time(ATS3)
-		temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
-		tail1[2] = tail(lum['r'], lum['g'], lum['b'], lum['c'])
-		flux1 = flux(lum['l'], num_gain(GS3), num_acquisition_time(ATS3))
-		lux = "{:.2f}".format(lum['l'])
-
-		# write the line of the sensor 3 in the csv file
-		
-		write_data(writer, "S3", time1['year'], time1['month'], time1['day'], time1['hour'], time1['min'], time1['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux1, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail1[0])
-
-		# Correction of the gain and integration time for sensor 3
-		corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS1, ATS3, WTS3)
-		GS3 = corr['c_g']
-		ATS3 = corr['c_at']
-		WTS3 = corr['c_wt']
-
-		# same thing for sensor 4
-		enable_selection(capteur4)
-		time_selection(capteur4, ATS4, WTS4)
-		gain_selection(capteur4, GS4)
-
-		lum = readluminance(capteur4)
-		time1 = get_time()
-		gps = get_location()
-		gain = num_gain(GS4)
-		acqt = num_acquisition_time(ATS4)
-		temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
-		tail1[3] = tail(lum['r'], lum['g'], lum['b'], lum['c'])
-		flux1 = flux(lum['l'], num_gain(GS4), num_acquisition_time(ATS4))
-		lux = "{:.2f}".format(lum['l'])
-
-		# write the line of the sensor 4 in the csv file
-		
-		write_data(writer, "S4", time1['year'], time1['month'], time1['day'], time1['hour'], time1['min'], time1['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux1, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail1[0])
-
-		# Correction of the gain and integration time for sensor 4
-		corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS4, ATS4, WTS4)
-		GS4 = corr['c_g']
-		ATS4 = corr['c_at']
-		WTS4 = corr['c_wt']
-
-		# same thing for sensor 5
-		enable_selection(capteur5)
-		time_selection(capteur5, ATS5, WTS5)
-		gain_selection(capteur5, GS5)
-
-		lum = readluminance(capteur5)
-		time1 = get_time()
-		gps = get_location()
-		gain = num_gain(GS5)
-		acqt = num_acquisition_time(ATS5)
-		temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
-		tail1[4] = tail(lum['r'], lum['g'], lum['b'], lum['c'])
-		flux1 = flux(lum['l'], num_gain(GS5), num_acquisition_time(ATS5))
-		lux = "{:.2f}".format(lum['l'])
-
-		# write the line of the sensor 5 in the csv file
-		
-		write_data(writer, "S5", time1['year'], time1['month'], time1['day'], time1['hour'], time1['min'], time1['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux1, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail1[0])
-
-		# Correction of the gain and integration time for sensor 5
-		corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS5, ATS5, WTS5)
-		GS5 = corr['c_g']
-		ATS5 = corr['c_at']
-		WTS5 = corr['c_wt']
-
-		if tail1[0] != "OK" or tail1[1] != "OK" or tail1[2] != "OK" or tail1[3] != "OK" or tail1[4] != "OK":
+		if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
 			whiteOff()
 			blueOn()
+			time.sleep(largest(ATS)/1000)
 		else:
 			whiteOff()
 			greenOn()
+			time.sleep(0.2)
 
 		# turn off the LED if any data is not complete
 		if get_location()['nSat'] == 0:
 			whiteOff()
+			magentaOn()
 
-		# Wait 0.5 second before gathering knew data!
-		time.sleep(0.5)
 		i = i + 1
 
 	elif button_status == 0:
