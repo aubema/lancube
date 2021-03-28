@@ -14,7 +14,8 @@ import time
 import csv
 import os
 from subprocess import check_call
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
+import SDL_DS3231
 
 # Get I2C bus
 capteur = [0, 0, 0, 0, 0]
@@ -23,6 +24,8 @@ capteur[1] = smbus.SMBus(3)
 capteur[2] = smbus.SMBus(4)
 capteur[3] = smbus.SMBus(5)
 capteur[4] = smbus.SMBus(6)
+
+ds3231 = SDL_DS3231.SDL_DS3231(1, 0x68)
 
 # I2C Address of the device
 TCS34725_DEFAULT_ADDRESS = 0x29
@@ -103,7 +106,7 @@ def readluminance(sensor):
 
 # function that generate the name of the csv file with the current date
 def name():
-	today = str(datetime.today())
+	today = str(ds3231.read_datetime())
 	year = today[0:4]
 	month = today[5:7]
 	day = today[8:10]
@@ -114,7 +117,7 @@ def name():
 
 # function that get the date and return the desired values
 def get_time():
-	today = str(datetime.today())
+	today = str(ds3231.read_datetime())
 	year = today[0:4]
 	month = today[5:7]
 	day = today[8:10]
