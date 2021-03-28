@@ -14,6 +14,7 @@ import time
 import csv
 import os
 from subprocess import check_call
+import matplotlib.pyplot as plt
 
 # Get I2C bus
 capteur = [0, 0, 0, 0, 0]
@@ -317,8 +318,8 @@ def largest(arr):
 	return max
 
 # setup GPIO end pins for LED
-redPin = 3
-greenPin = 5
+redPin = 38
+greenPin = 40
 bluePin = 7
 
 # general GPIO setup
@@ -403,7 +404,7 @@ name1 = name()
 gpsd.connect()
 
 #TEMPORARY
-data = open('/home/pi/Capteurs/' + name1, 'w', newline='')
+data = open('/var/www/html/data/' + name1, 'w', newline='')
 writer = csv.writer(data)
 writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites", "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
 
@@ -433,10 +434,12 @@ WTS[4] = TCS34725_REG_WTIME_4_8
 
 #TEMPORARY (suite)
 data.close()
-data = open('/home/pi/Capteurs/' + name1, 'a')
+data = open('/var/www/html/data/' + name1, 'a')
 writer = csv.writer(data)
 
 #initial value variables
+graph_x = []
+graph_y = []
 tail = ["--", "--", "--", "--", "--"]
 button_status = 0
 end = 0
@@ -483,6 +486,7 @@ while end == 0:
 			GS[a] = corr['c_g']
 			ATS[a] = corr['c_at']
 			WTS[a] = corr['c_wt']
+			
 
 		if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
 			whiteOff()
