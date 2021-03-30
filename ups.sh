@@ -63,7 +63,7 @@ do
 	fi
 	
 	#If power was not restored in 60 seconds
-	if (( "$power_timer" == 600 )); then 
+	if (( "$power_timer" == 50 )); then 
 		#echo $power_timer;
 		echo "Powering off..."
 		sleep 2;
