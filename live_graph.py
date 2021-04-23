@@ -50,7 +50,7 @@ while end == 0:
             print("waiting for 100 data...")
          
         wait = 1
-        data = np.genfromtxt("/var/www/html/data/" + name, delimiter=",", names=["", "", "", "", "", "z", "b", "", "", "", "", "", "", "", "", "y", "", "", "", "", ""])
+        data = np.genfromtxt("/var/www/html/data/" + name, delimiter=",", names=["", "", "", "", "", "z", "b", "", "", "", "", "", "", "", "y", "", "", "", "", "", ""])
 
         if len(data['z'])/5 > 110:
             if wait_1 == 0:

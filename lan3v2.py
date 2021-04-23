@@ -495,15 +495,14 @@ while end == 0:
 			whiteOff()
 			blueOn()
 			time.sleep(largest(ATS)/1000)
-		else:
+		elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and get_location()['nSat'] == 0:
+			whiteOff()
+			yellowOn()
+		elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and get_location()['nSat'] != 0:
 			whiteOff()
 			greenOn()
-			time.sleep(0.2)
-
-		# turn off the LED if any data is not complete
-		if get_location()['nSat'] == 0:
-			whiteOff()
-			magentaOn()
+		
+		time.sleep(0.2)
 
 		i = i + 1
 
