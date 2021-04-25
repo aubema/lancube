@@ -323,7 +323,7 @@ def largest(arr):
 # setup GPIO end pins for LED
 redPin = 38
 greenPin = 40
-bluePin = 7
+bluePin = 37
 
 # general GPIO setup
 GPIO.setwarnings(False)
