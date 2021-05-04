@@ -8,14 +8,11 @@
 import smbus
 import RPi.GPIO as GPIO
 import numpy as np
-import gpsd
 from datetime import datetime
 import time
 import csv
 import os
 from subprocess import check_call
-#import matplotlib.pyplot as plt
-#import SDL_DS3231
 
 # Get I2C bus
 capteur = [0, 0, 0, 0, 0]
@@ -126,17 +123,6 @@ def get_time():
 	second = today[17:19]
 	
 	return {'year' : year, 'month' : month, 'day' : day, 'hour' : hour, 'min' : minute, 'sec' : second} 
-
-# function that get the current location and return each desired values
-def get_location():
-	packet = gpsd.get_current()
-	
-	lat = packet.lat
-	lon = packet.lon
-	alt = packet.alt
-	nSat = packet.sats_valid
-
-	return {'lat' : lat, 'lon' : lon, 'alt' : alt, 'nSat' : nSat}
 
 # function that convert the hexadecimal gain in a digital one (used in flux() function)
 def num_gain(current_gain):
@@ -403,9 +389,6 @@ yellowOn()
 #name of the file
 name1 = name()
 
-#connect GPS
-gpsd.connect()
-
 #TEMPORARY
 data = open('/var/www/html/data/' + name1, 'w', newline='')
 writer = csv.writer(data)
@@ -472,7 +455,6 @@ while end == 0:
 
 			lum = readluminance(capteur[a])
 			time_str = get_time()
-			gps = get_location()
 			gain = num_gain(GS[a])
 			acqt = num_acquisition_time(ATS[a])
 			temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
@@ -482,7 +464,7 @@ while end == 0:
 
 			# write the line of the sensor 1 in the csv file
 		
-			write_data(writer, a+1, time_str['year'], time_str['month'], time_str['day'], time_str['hour'], time_str['min'], time_str['sec'], gps['lat'], gps['lon'], gps['alt'], gps['nSat'], gain, acqt, temp, flux, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[0])
+			write_data(writer, a+1, time_str['year'], time_str['month'], time_str['day'], time_str['hour'], time_str['min'], time_str['sec'], "lat", "lon", "alt", "nSat", gain, acqt, temp, flux, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[0])
 
 			# Correction of the gain and integration time for sensor 1
 			corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
@@ -495,10 +477,10 @@ while end == 0:
 			whiteOff()
 			blueOn()
 			time.sleep(largest(ATS)/1000)
-		elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and get_location()['nSat'] == 0:
-			whiteOff()
-			yellowOn()
-		elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and get_location()['nSat'] != 0:
+		#elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK":
+		#	whiteOff()
+		#	yellowOn()
+		elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK":
 			whiteOff()
 			greenOn()
 		
