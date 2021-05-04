@@ -3,8 +3,17 @@ import numpy as np
 import csv
 from datetime import datetime
 import os
+import time
 
-data = open("/var/www/html/data/gps.csv", 'w', newline='')
+print("getting ready!")
+os.system("sudo systemctl stop gpsd.socket")
+os.system("sudo systemctl disable gpsd.socket")
+os.system("sudo killall gpsd")
+os.system("sudo gpsd /dev/ttyACM0 -F /var/run/gpsd.sock")
+time.sleep(2)
+print("ready!")
+
+data = open("/var/www/html/data/gps.txt", 'w', newline='')
 
 today = str(datetime.now())
 year = today[0:4]
@@ -24,7 +33,7 @@ while True:
     log = open("/var/www/html/data/live/gps_log.txt", 'a')
     data = open("/var/www/html/data/gps.txt", 'a', newline='')
     
-    raw = subprocess.Popen("/usr/bin/gpspipe -w -n 5", shell=True, stdout=subprocess.PIPE)
+    raw = subprocess.Popen("/usr/bin/gpspipe -w -n 5 /dev/ttyACM0 9600", shell=True, stdout=subprocess.PIPE)
     raw_out = raw.stdout.read()
 
     npraw = np.array(raw_out.split())
@@ -46,7 +55,7 @@ while True:
                 lat = coorraw[5][6:]
                 lon = coorraw[6][6:]
             log.write("Data correctly acquire\n")
-            os.system("clear")
+            #os.system("clear")
             print("Data correctly acquire")
         else:
             nb_sats = 0
@@ -59,7 +68,7 @@ while True:
         lat = 999
         lon = 999
         nb_sats = 999
-        os.system("clear")
+        #os.system("clear")
         print("no")
         log.write("ERROR\n")
     

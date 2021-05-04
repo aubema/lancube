@@ -19,4 +19,4 @@ while True:
 
     print(futur_lat)
     print(futur_lon)
-    time.sleep(0.5)
+    time.sleep(0.2)
