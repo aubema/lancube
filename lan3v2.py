@@ -11,7 +11,9 @@ from datetime import datetime
 import time
 import csv
 import os
-import pandas as pd
+import threading
+import serial
+import pynmea2
 
 # Get I2C bus
 capteur = [0, 0, 0, 0, 0]
@@ -128,9 +130,9 @@ def get_time():
     year = today[0:4]
     month = today[5:7]
     day = today[8:10]
-    hour = today[11:13]
-    minute = today[14:16]
-    second = today[17:19]
+    hour = int(today[11:13])
+    minute = int(today[14:16])
+    second = float(today[17:19])
 
     return {'year': year, 'month': month, 'day': day, 'hour': hour, 'min': minute, 'sec': second}
 
@@ -356,6 +358,9 @@ GPIO.setup(3, GPIO.OUT)
 GPIO.setup(5, GPIO.OUT)
 GPIO.setup(7, GPIO.OUT)
 
+# UBS gpio setup
+GPIO.setup(11, GPIO.IN)
+
 # all colors LED functions
 
 
@@ -434,6 +439,98 @@ def whiteOff():
     turnOff(greenPin)
     turnOff(bluePin)
 
+# UPS hat shutting down after 60 sec without power
+
+
+def ups():
+    global end
+    while end == 0:
+        if GPIO.input(11) == 1:
+            print("WARNING, Lancube has no more power, shutting down in 60 sec if power is not recovered")
+
+            for i in range(60):
+                if GPIO.input(11) == 1 and i == 59:
+                    end = 1
+                elif GPIO.input(11) == 0:
+                    print("Power correctly recovered, lancube not shutting down")
+                    break
+                else:
+                    print("waiting for power recovery...")
+                    time.sleep(1)
+
+
+def getPositionData():
+    global end
+    global lat
+    global lon
+    global alt
+    global nbSats
+    global times
+    print("Application started!")
+    SERIAL_PORT = "/dev/ttyACM0"
+    gps = serial.Serial(SERIAL_PORT, baudrate=9600, timeout=0.5)
+    print("serial open")
+
+    while end == 0:
+        try:
+            data = gps.readline()
+            message = str(data[0:6])
+            message = message[2:8]
+            message_all = str(data)
+            message_all = message_all[2:-1]
+
+            if (message == "$GPGGA"):
+                # GPGGA = Global Positioning System Fix Data
+                # Reading the GPS fix data is an alternative approach that also works
+                today = str(datetime.now())
+                hour = int(today[11:13])
+                minute = int(today[14:16])
+                second = float(today[17:])
+                times[0] = times[1]
+                times[1] = hour*3600 + minute*60 + second
+                data = str(data)
+                data = data[2:-5]
+
+                parts = pynmea2.parse(data)
+
+                if int(parts.gps_qual) != 1:
+                    # Different from 1 = No gps fix...
+                    print("No gps fix")
+                    lat[0] = 0
+                    lon[0] = 0
+                    alt[0] = 0
+                    lat[1] = 0
+                    lon[1] = 0
+                    alt[1] = 0
+                    nbSats = 0
+                else:
+                    # Get the position data that was transmitted with the GPGGA message
+                    lat[0] = lat[1]
+                    lon[0] = lon[1]
+                    alt[0] = alt[1]
+
+                    lat[1] = float(parts.latitude)
+                    lon[1] = float(parts.longitude)
+                    alt[1] = float(parts.altitude)
+                    nbSats = int(parts.num_sats)
+
+            else:
+                # Handle other NMEA messages and unsupported strings
+                pass
+        except KeyboardInterrupt:
+            gps.close()
+            print("Application closed!")
+        except:
+            lat[0] = 0
+            lon[0] = 0
+            alt[0] = 99
+            lat[1] = 99
+            lon[1] = 99
+            alt[1] = 99
+            nbSats = 99
+
+            print("ERROR")
+
 
 # initialisation
 # LED
@@ -485,6 +582,21 @@ tail = ["--", "--", "--", "--", "--"]
 button_status = 0
 end = 0
 i = 0
+running = True
+today = str(datetime.now())
+year = today[0:4]
+month = today[5:7]
+day = today[8:10]
+lat = [0, 0]
+lon = [0, 0]
+alt = [0, 0]
+nbSats = 0
+times = [0, 0]
+# gps thread initialisation
+tGps = threading.Thread(target=getPositionData, name="Gps thread")
+tGps.start()
+tUps = threading.Thread(target=ups, name="Ups thread")
+tUps.start()
 
 # button GPIO setup
 GPIO.setup(21, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
@@ -519,27 +631,26 @@ while end == 0:
             lux = "{:.2f}".format(lum['l'])
 
             # Used for gps
-            time_sec = float(time_str['hour'])*3600 + \
-                float(time_str['min'])*60 + float(time_str['sec'])
-            data_gps = pd.read_csv("/var/www/html/data/gps.txt")
-            data_list = data_gps.values.tolist()
-            t = data_list[-1][0]
-            tmoins = data_list[-2][0]
-            lat_t = data_list[-1][1]
-            lat_t_moins = data_list[-2][1]
-            lon_t = data_list[-1][2]
-            lon_t_moins = data_list[-2][2]
-            alt_t = data_list[-1][3]
-            alt_t_moins = data_list[-2][3]
-            nb_sats = int(data_list[-1][4])
+            today = str(datetime.now())
+            hour = int(today[11:13])
+            minute = int(today[14:16])
+            second = float(today[17:])
+            time_sec = hour*3600 + \
+                minute*60 + second
+
             # Interpolation of the position
-            future_lat = (lat_t-lat_t_moins)/(t-tmoins)*(time_sec-t)+lat_t
-            future_lon = (lon_t-lon_t_moins)/(t-tmoins)*(time_sec-t)+lon_t
-            future_alt = (alt_t-alt_t_moins)/(t-tmoins)*(time_sec-t)+alt_t
+            if (times[1]-times[0]) != 0:
+                future_lat = (lat[1]-lat[0])/(times[1]-times[0])*(time_sec-times[1])+lat[1]
+                future_lon = (lon[1]-lon[0])/(times[1]-times[0])*(time_sec-times[1])+lon[1]
+                future_alt = (alt[1]-alt[0])/(times[1]-times[0])*(time_sec-times[1])+alt[1]
+            else:
+                future_lat = 0
+                future_lon = 0
+                future_alt = 0
 
             # write the line of the sensor 1 in the csv file
             write_data(writer, a+1, time_str['year'], time_str['month'], time_str['day'], time_str['hour'], time_str['min'],
-                       time_str['sec'], future_lat, future_lon, future_alt, nb_sats, gain, acqt, temp, flux, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
+                       time_str['sec'], future_lat, future_lon, future_alt, nbSats, gain, acqt, temp, flux, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
 
             # Correction of the gain and integration time for sensor 1
             corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
@@ -551,11 +662,11 @@ while end == 0:
             whiteOff()
             blueOn()
             time.sleep(largest(ATS)/1000)
-        elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nb_sats <= 3:
+        elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats <= 3:
             whiteOff()
             yellowOn()
             time.sleep(0.2)
-        elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nb_sats > 3:
+        elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats > 3:
             whiteOff()
             greenOn()
             time.sleep(0.2)
@@ -579,5 +690,5 @@ data.close()
 whiteOff()
 redOn()
 print("Shutdown")
+time.sleep(1)
 # os.system("sudo shutdown -h now")
-whiteOff()
