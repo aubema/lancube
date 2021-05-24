@@ -1,78 +1,79 @@
-import subprocess
-import numpy as np
-import csv
-from datetime import datetime
-import os
-import time
+import serial
+import pynmea2
+from time import gmtime, strftime
 
-print("getting ready!")
-os.system("sudo systemctl stop gpsd.socket")
-os.system("sudo systemctl disable gpsd.socket")
-os.system("sudo killall gpsd")
-os.system("sudo gpsd /dev/ttyACM0 -F /var/run/gpsd.sock")
-time.sleep(2)
-print("ready!")
+SERIAL_PORT = "/dev/ttyACM0"
+running = True
 
-data = open("/var/www/html/data/gps.txt", 'w', newline='')
-
-today = str(datetime.now())
+today = strftime("%Y-%m-%d %H:%M:%S", gmtime())
 year = today[0:4]
 month = today[5:7]
 day = today[8:10]
 
-writer_data = csv.writer(data)
-open("/var/www/html/data/live/gps_log.txt", 'w').close()
+data = open("/var/www/html/data/gps.txt", 'w', newline='').close()
 
-while True:
-    today = str(datetime.now())
-    hour = int(today[11:13])
-    minute = int(today[14:16])
-    second = float(today[17:])
-    time = hour*3600 + minute*60 + second
 
-    log = open("/var/www/html/data/live/gps_log.txt", 'a')
-    data = open("/var/www/html/data/gps.txt", 'a', newline='')
-    
-    raw = subprocess.Popen("/usr/bin/gpspipe -w -n 5 /dev/ttyACM0 9600", shell=True, stdout=subprocess.PIPE)
-    raw_out = raw.stdout.read()
+def getPositionData(gps):
 
-    npraw = np.array(raw_out.split())
+    data = gps.readline()
+    message = str(data[0:6])
+    message = message[2:8]
+    message_all = str(data)
+    message_all = message_all[2:-1]
 
-    if npraw.size > 7: # if 7 or under, it means the gps got an error
-        coorraw = str(npraw[7]).split(',')
-        mode = coorraw[2][7] # mode 1 = no fix, mode 2 = 2D and mode 3 = 3D
+    if (message == "$GPGGA"):
+        # GPGGA = Global Positioning System Fix Data
+        # Reading the GPS fix data is an alternative approach that also works
+        today = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        hour = int(today[11:13])
+        minute = int(today[14:16])
+        second = float(today[17:])
+        times = hour*3600 + minute*60 + second
+        data = str(data)
+        data = data[2:-5]
 
-        if mode != "1":
-            nb_sat_raw = np.array(str(npraw[8]).split('used'))
-            nb_sat = []
-            nb_sats = 0
-            for i in range(nb_sat_raw.size):
-                if i != 0:
-                    nb_sat.append(nb_sat_raw[i][2:6])
-                    if nb_sat[i-1] == 'true':
-                        nb_sats += 1
+        parts = pynmea2.parse(data)
 
-                lat = coorraw[5][6:]
-                lon = coorraw[6][6:]
-            log.write("Data correctly acquire\n")
-            #os.system("clear")
-            print("Data correctly acquire")
-        else:
-            nb_sats = 0
+        if int(parts.gps_qual) != 1:
+            # Different from 1 = No gps fix...
+            print("No gps fix")
             lat = 0
             lon = 0
-            log.write("no fix\n")
-            os.system("clear")
-            print("no fix")
+            alt = 0
+            nbSats = 0
+        else:
+            # Get the position data that was transmitted with the GPGGA message
+            lat = parts.latitude
+            lon = parts.longitude
+            alt = parts.altitude
+            nbSats = parts.num_sats
+            print(parts.longitude)
+
+        data = open("/var/www/html/data/gps.txt", 'a', newline='')
+        data.write(str(times) + "," + str(lat)[0:10] + "," + str(lon)[0:10] +
+                   "," + str(alt) + "," + str(nbSats) + "\n")
+        data.close()
     else:
-        lat = 999
-        lon = 999
-        nb_sats = 999
-        #os.system("clear")
-        print("no")
-        log.write("ERROR\n")
-    
-    #writer_data.writerow([time, lat, lon, nb_sats])
-    data.write(str(time) + "," + str(lat) + "," + str(lon) + "," + str(nb_sats) + "\n")
-    open("/var/www/html/data/live/gps_log.txt", 'w').close()
-    data.close()
+        # Handle other NMEA messages and unsupported strings
+        pass
+
+
+print("Application started!")
+gps = serial.Serial(SERIAL_PORT, baudrate=9600, timeout=0.5)
+print("serial open")
+
+while running:
+    try:
+        getPositionData(gps)
+    except KeyboardInterrupt:
+        running = False
+        gps.close()
+        print("Application closed!")
+    except:
+        print("ERROR")
+        lat = 99
+        lon = 99
+        alt = 99
+        nbSats = 99
+        data.write(str(times) + "," + str(lat)[0:10] + "," + str(lon)[0:10] +
+                   "," + str(alt) + "," + str(nbSats) + "\n")
