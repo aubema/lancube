@@ -123,7 +123,7 @@ def get_time():
     day = today[8:10]
     hour = int(today[11:13])
     minute = int(today[14:16])
-    second = float(today[17:19])
+    second = float("{:.2f}".format(float(today[17:25])))
 
     return {'year': year, 'month': month, 'day': day, 'hour': hour, 'min': minute, 'sec': second}
 
@@ -198,30 +198,13 @@ def colour_temperature(r, g, b, c):
 
     return colour_temp
 
-# Calculate the flux
-
-
-def get_flux(lux, Ga, AT):
-
-    flux = 0
-
-    if Ga != 0 and AT != 0:
-        flux = lux / Ga / AT * 481
-        flux = "{:.2f}".format(flux)
-
-    else:
-        flux = str(flux)
-        flux = "N/A"
-
-    return flux
-
 # Write everything in the .csv file
 
 
-def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail):
+def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, lux, r, g, b, c, tail):
 
     writer.writerow(["S" + str(sensor), year, month, day, hour, min, sec, lat,
-                    lon, alt, nSat, ga, acqt, temp, flux, lux, r, g, b, c, tail])
+                    lon, alt, nSat, ga, acqt, temp, lux, r, g, b, c, tail])
 
 
 # Check if the data is over exposed, under exposed or correctly exposed and return the corresponding tail
@@ -251,28 +234,6 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             current_waiting_time = TCS34725_REG_WTIME_4_8
             current_gain = TCS34725_REG_CONTROL_AGAIN_1
 
-        """
-        if current_acquisition_time == TCS34725_REG_ATIME_614_4:
-            current_acquisition_time = TCS34725_REG_ATIME_153_6
-            current_waiting_time = TCS34725_REG_WTIME_156
-        elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
-            current_acquisition_time = TCS34725_REG_ATIME_38_4
-            current_waiting_time = TCS34725_REG_WTIME_40_8
-        elif current_acquisition_time == TCS34725_REG_ATIME_38_4:
-            current_acquisition_time = TCS34725_REG_ATIME_9_6
-            current_waiting_time = TCS34725_REG_WTIME_12
-        elif current_acquisition_time == TCS34725_REG_ATIME_9_6:
-            current_acquisition_time = TCS34725_REG_ATIME_2_4
-            current_waiting_time = TCS34725_REG_WTIME_4_8
-        elif current_gain == TCS34725_REG_CONTROL_AGAIN_60:
-            current_gain = TCS34725_REG_CONTROL_AGAIN_16
-        elif current_gain == TCS34725_REG_CONTROL_AGAIN_16:
-            current_gain = TCS34725_REG_CONTROL_AGAIN_4
-        elif current_gain == TCS34725_REG_CONTROL_AGAIN_4:
-            current_gain = TCS34725_REG_CONTROL_AGAIN_1
-        else:
-            print("There is just too much light...... :( ")
-        """
     elif red <= 99 or green <= 99 or blue <= 99 or clear <= 99:
         print("ERROR = SENSOR UNDERSATURATION : Trying to correct the settings...")
 
@@ -469,8 +430,8 @@ def getPositionData():
 
                 parts = pynmea2.parse(data)
 
-                if int(parts.gps_qual) != 1:
-                    # Different from 1 = No gps fix...
+                if int(parts.gps_qual) == 0:
+                    # Equal to 0 = No gps fix...
                     print("No gps fix")
                     lat[0] = 0
                     lon[0] = 0
@@ -485,9 +446,9 @@ def getPositionData():
                     lon[0] = lon[1]
                     alt[0] = alt[1]
 
-                    lat[1] = float(parts.latitude)
-                    lon[1] = float(parts.longitude)
-                    alt[1] = float(parts.altitude)
+                    lat[1] = float("{:.6f}".format(parts.latitude))
+                    lon[1] = float("{:.6f}".format(parts.longitude))
+                    alt[1] = float("{:.6f}".format(parts.altitude))
                     nbSats = int(parts.num_sats)
 
             else:
@@ -555,7 +516,7 @@ data = open('/var/www/html/data/' + name1, 'a')
 writer = csv.writer(data)
 if os.stat('/var/www/html/data/' + name1).st_size <= 0:
     writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
-                    "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+                    "Gain", "Acquisition time (ms)", "Color Temperature (k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
 
 # Initialize values of the variables
 tail = ["--", "--", "--", "--", "--"]
@@ -614,7 +575,6 @@ while end == 0:
             acqt = num_acquisition_time(ATS[a])
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
-            flux = get_flux(lum['l'], num_gain(GS[a]), num_acquisition_time(ATS[a]))
             lux = "{:.2f}".format(lum['l'])
 
             # Used for gps
@@ -626,10 +586,13 @@ while end == 0:
                 minute*60 + second
 
             # Interpolation of the position
-            if (times[1]-times[0]) != 0:
-                future_lat = (lat[1]-lat[0])/(times[1]-times[0])*(time_sec-times[1])+lat[1]
-                future_lon = (lon[1]-lon[0])/(times[1]-times[0])*(time_sec-times[1])+lon[1]
-                future_alt = (alt[1]-alt[0])/(times[1]-times[0])*(time_sec-times[1])+alt[1]
+            if (times[1]-times[0]) != 0 and lat[0] != 0 and lat[1] != 0 and lon[0] != 0 and lon[1] != 0:
+                future_lat = float("{:.6f}".format(
+                    (lat[1]-lat[0])/(times[1]-times[0])*(time_sec-times[1])+lat[1]))
+                future_lon = float("{:.6f}".format(
+                    (lon[1]-lon[0])/(times[1]-times[0])*(time_sec-times[1])+lon[1]))
+                future_alt = float("{:.1f}".format(
+                    (alt[1]-alt[0])/(times[1]-times[0])*(time_sec-times[1])+alt[1]))
             else:
                 future_lat = 0
                 future_lon = 0
@@ -637,7 +600,7 @@ while end == 0:
 
             # write the line of the sensor 1 in the csv file
             write_data(writer, a+1, time_str['year'], time_str['month'], time_str['day'], time_str['hour'], time_str['min'],
-                       time_str['sec'], future_lat, future_lon, future_alt, nbSats, gain, acqt, temp, flux, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
+                       time_str['sec'], future_lat, future_lon, future_alt, nbSats, gain, acqt, temp, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
 
             # Correction of the gain and integration time for sensor 1
             corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
