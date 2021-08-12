@@ -1,6 +1,8 @@
 # Lancube
 LANcube instrument software
 
+<img src="lan3v2.png" width="250">
+
 ## Getting started with the Lancube
 To install the software system on a physical Lancube please refer to this guide:
 https://lx02.cegepsherbrooke.qc.ca/~aubema/index.php/Prof/LAN3v2-technical
