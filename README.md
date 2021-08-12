@@ -12,7 +12,7 @@ https://lx02.cegepsherbrooke.qc.ca/~aubema/index.php/Prof/LAN3v2-technical
 ## Generate discrete lights inventory from the Lancube
 The script lancube_inventory.py genereate a discreate light source inventory from the data scanned.
 
-The script automatically correct abberrant and imprecise data by looking atthe following items
+The script automatically correct abberrant and imprecise data by looking at the following items
   * Disconection from the GPS
   * Sensors with overexpose values
   * Distance between two measures
