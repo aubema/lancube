@@ -1,6 +1,5 @@
 # Lancube
-LANcube V2 instrument software
-![alt text](https://lx02.cegepsherbrooke.qc.ca/~aubema/index.php/Prof/LAN3v2-users-manual?action=dispimg&im=lan3v2.p.jpg)
+LANcube instrument software
 
 ## Getting started with the Lancube
 To install the software system on a physical Lancube please refer to this guide:
