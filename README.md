@@ -29,7 +29,7 @@ It provides the following lamps characteristic:
    * D: Distance with prime
    * d: Distance from light
    * Lights technologie
-   * RGB + clear data
+   * RGB / Clear
 
 
 For further details on the script execution and the calculations performs, please refer to this paper: xxx
