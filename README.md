@@ -12,15 +12,17 @@ LANcube instrument software
 
 
 
-## Generate discrete lights inventory from the Lancube
-The script ```lancube_inventory.py``` generates a discrete light source inventory from the data scanned.
-It will automatically correct aberrant and imprecise data by looking at the following elements:
+## Generate discrete lights inventory
+You simply need to execute the script ```make_inventory.py``` to generates a discrete light source inventory from the data scanned. Make sure to **modify the paramters** in the file before execution.
+
+
+By calling ```cleaning_data.py```, the software will automatically correct aberrant and imprecise data by looking at the following elements:
   * Disconnection from the GPS
   * Sensors with overexpose values
   * Distance between two measures
   * Distance with the roads
 
-#### Inventory output
+### Inventory output
 During execution the file ```lan3_inventory.csv``` will be created in your execution folder.
 It provides the following lamps characteristic:
    * GPS coordinates: (lat, lon)
