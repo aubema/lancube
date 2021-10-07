@@ -313,7 +313,7 @@ GPIO.setup(greenPin, GPIO.OUT)
 GPIO.setup(bluePin, GPIO.OUT)
 
 # UPS gpio setup
-GPIO.setup(11, GPIO.IN)
+# GPIO.setup(11, GPIO.IN)
 
 # All colors LED functions
 
