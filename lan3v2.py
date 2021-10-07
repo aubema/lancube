@@ -576,8 +576,8 @@ times = [0, 0]
 # Gps thread initialisation
 tGps = threading.Thread(target=getPositionData, name="Gps thread")
 tGps.start()
-tUps = threading.Thread(target=ups, name="Ups thread")
-tUps.start()
+# tUps = threading.Thread(target=ups, name="Ups thread")
+# tUps.start()
 
 # Main loop
 while end == 0:
