@@ -593,6 +593,7 @@ while end == 0:
             lum1 = clux(lum['l'], gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
+            print("Corrected lux=", lum1)
             lux = "{:.2f}".format(lum1['l'])
             # Used for gps
             today = str(datetime.now())
