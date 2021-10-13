@@ -18,7 +18,6 @@ do let i=i+1
 	echo "DATE:" $y"-"$mo"-"$d "<br>">> /var/www/html/index.html
 	echo "Time:" $hour":"$min":"$sec  "<br>">> /var/www/html/index.html
 	echo "<br>">> /var/www/html/index.html
-	echo "SENSOR #1<br>">> /var/www/html/index.html
 	echo "<table border=1>" >> /var/www/html/index.html
 	echo "  <tr>" >> /var/www/html/index.html
 	echo "    <th>Sensor</th>" >> /var/www/html/index.html
