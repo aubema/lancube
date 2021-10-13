@@ -165,12 +165,13 @@ def num_acquisition_time(current_acquisition_time):
 
 
 # function that calculate de calibrated lux (and return "N/A" if there is a /0)
+# the function is optimized for white LED lights
 def clux(lux, Ga, AT):
 
 	clux = 0
 
 	if Ga != 0 and AT != 0:
-		clux = lux / Ga / AT * 290
+		clux = lux / Ga / AT * 385
 		clux = "{:.2f}".format(clux)
 
 	else:
