@@ -163,6 +163,24 @@ def num_acquisition_time(current_acquisition_time):
 
     return acquisition_time
 
+
+# function that calculate de calibrated lux (and return "N/A" if there is a /0)
+def clux(lux, Ga, AT):
+
+	clux = 0
+
+	if Ga != 0 and AT != 0:
+		clux = lux / Ga / AT * 548
+		clux = "{:.2f}".format(flux)
+
+	else:
+		clux = str(flux)
+		clux = "N/A"
+
+	return clux     
+
+
+
 # Calculate the color temperature
 
 
@@ -568,16 +586,14 @@ while end == 0:
             enable_selection(capteur[a])
             time_selection(capteur[a], ATS[a], WTS[a])
             gain_selection(capteur[a], GS[a])
-
             lum = readluminance(capteur[a])
             time_str = get_time()
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
-            CorLum = 548*lum/gain/acqt
+            lum1 = clux(lum['l'], gain, acqt))
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
-            # lux = "{:.2f}".format(lum['l'])
-            lux = "{:.2f}".format(CorLum['l'])
+            lux = "{:.2f}".format(lum1['l'])
             # Used for gps
             today = str(datetime.now())
             hour = int(today[11:13])
