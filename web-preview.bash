@@ -8,7 +8,7 @@ echo "<html>" > /var/www/html/index.html
 echo "<body>" >> /var/www/html/index.html
 echo "DATE:" $y"-"$mo"-"$d "<br>">> /var/www/html/index.html
 echo "Time:" $hour":"$min":"$sec  "<br>">> /var/www/html/index.html
-echo "<table>" >> /var/www/html/index.html
+echo "<table border=1>" >> /var/www/html/index.html
 echo "  <tr>" >> /var/www/html/index.html
 echo "    <th>Gain</th>" >> /var/www/html/index.html
 echo "    <th>Integ. Time</th>" >> /var/www/html/index.html
