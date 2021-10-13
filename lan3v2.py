@@ -573,10 +573,11 @@ while end == 0:
             time_str = get_time()
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
+            CorLum = 548*lum/gain/acqt
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
-            lux = "{:.2f}".format(lum['l'])
-
+            # lux = "{:.2f}".format(lum['l'])
+            lux = "{:.2f}".format(CorLum['l'])
             # Used for gps
             today = str(datetime.now())
             hour = int(today[11:13])
