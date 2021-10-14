@@ -3,7 +3,6 @@ y=`date +%Y`
 mo=`date +%m`
 d=`date +%d`
 i=0
-sleep 1
 while [ $i -lt 11 ]
 do let i=i+1
 	grep "S1"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto1.tmp
@@ -14,7 +13,7 @@ do let i=i+1
 	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto1.tmp
 	echo "<html>" > /var/www/html/index.html
 	echo "<head>" > /var/www/html/index.html
-	echo "  <meta http-equiv="refresh" content="10">" >> /var/www/html/index.html
+	echo "  <meta http-equiv="refresh" content="9">" >> /var/www/html/index.html
 	echo "</head>" >> /var/www/html/index.html
 	echo "<body>" >> /var/www/html/index.html
 	echo "DATE:" $y"-"$mo"-"$d "<br>">> /var/www/html/index.html
