@@ -3,6 +3,7 @@ y=`date +%Y`
 mo=`date +%m`
 d=`date +%d`
 i=0
+sleep 1
 while [ $i -lt 12 ]
 do let i=i+1
 	grep "S1"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto1.tmp
@@ -10,6 +11,7 @@ do let i=i+1
 	grep "S3"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto3.tmp
 	grep "S4"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto4.tmp
 	grep "S5"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto5.tmp	
+	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto1.tmp
 	echo "<html>" > /var/www/html/index.html
 	echo "<head>" > /var/www/html/index.html
 	echo "  <meta http-equiv="refresh" content="5">" >> /var/www/html/index.html
@@ -17,6 +19,7 @@ do let i=i+1
 	echo "<body>" >> /var/www/html/index.html
 	echo "DATE:" $y"-"$mo"-"$d "<br>">> /var/www/html/index.html
 	echo "Time:" $hour":"$min":"$sec  "<br>">> /var/www/html/index.html
+	echo "GPS Latitude:" $lat"  Longitude:"$lon"<br>">> /var/www/html/index.html
 	echo "<br>">> /var/www/html/index.html
 	echo "<table border=1>" >> /var/www/html/index.html
 	echo "  <tr>" >> /var/www/html/index.html
@@ -31,8 +34,6 @@ do let i=i+1
 	echo "    <th>C</th>" >> /var/www/html/index.html
 	echo "    <th>Status</th>" >> /var/www/html/index.html
 	echo "  </tr>" >> /var/www/html/index.html
-	
-	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto1.tmp
 	echo "  <tr>" >> /var/www/html/index.html
 	echo "    <th>"1"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
