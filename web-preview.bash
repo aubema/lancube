@@ -4,7 +4,7 @@ mo=`date +%m`
 d=`date +%d`
 i=0
 sleep 1
-while [ $i -lt 12 ]
+while [ $i -lt 11 ]
 do let i=i+1
 	grep "S1"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto1.tmp
 	grep "S2"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto2.tmp
