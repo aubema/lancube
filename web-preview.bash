@@ -102,5 +102,5 @@ do let i=i+1
 	echo "</table>" >> /var/www/html/index.html
 	echo "</body>" >> /var/www/html/index.html
 	echo "</html>" >> /var/www/html/index.html
-	sleep 5
+	sleep 9
 done
