@@ -14,7 +14,7 @@ do let i=i+1
 	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto1.tmp
 	echo "<html>" > /var/www/html/index.html
 	echo "<head>" > /var/www/html/index.html
-	echo "  <meta http-equiv="refresh" content="5">" >> /var/www/html/index.html
+	echo "  <meta http-equiv="refresh" content="10">" >> /var/www/html/index.html
 	echo "</head>" >> /var/www/html/index.html
 	echo "<body>" >> /var/www/html/index.html
 	echo "DATE:" $y"-"$mo"-"$d "<br>">> /var/www/html/index.html
@@ -102,5 +102,5 @@ do let i=i+1
 	echo "</table>" >> /var/www/html/index.html
 	echo "</body>" >> /var/www/html/index.html
 	echo "</html>" >> /var/www/html/index.html
-	sleep 9
+	sleep 5
 done
