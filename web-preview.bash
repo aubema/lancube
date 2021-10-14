@@ -12,8 +12,6 @@ do 	grep "S1"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto
 	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto1.tmp
 	echo "<html>" > /var/www/html/index.html
 	echo "<head>" > /var/www/html/index.html
-	echo "  <meta http-equiv="refresh" content="9">" >> /var/www/html/index.html
-	echo "</head>" >> /var/www/html/index.html
 	echo "<body>" >> /var/www/html/index.html
 	echo "DATE:" $y"-"$mo"-"$d "<br>">> /var/www/html/index.html
 	echo "Time:" $hour":"$min":"$sec  "<br>">> /var/www/html/index.html
