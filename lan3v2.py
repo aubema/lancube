@@ -567,7 +567,7 @@ while end == 0:
         data = open('/var/www/html/data/' + name1_update, 'a')
         writer = csv.writer(data)
         writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
-                         "Gain", "Acquisition time (ms)", "Color Temperature (k)", "Flux", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+                         "Gain", "Acquisition time (ms)", "Color Temperature (k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
         name1 = name1_update
 
     name1_update = name()
