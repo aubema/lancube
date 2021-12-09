@@ -534,8 +534,8 @@ WTS[4] = TCS34725_REG_WTIME_4_8
 data = open('/var/www/html/data/' + name1, 'a')
 writer = csv.writer(data)
 if os.stat('/var/www/html/data/' + name1).st_size <= 0:
-    writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
-                    "Gain", "Acquisition time (ms)", "Color Temperature (k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+    writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "NumberSatellites",
+                    "Gain", "AcquisitionTime(ms)", "ColorTemperature(k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
 
 # Initialize values of the variables
 tail = ["--", "--", "--", "--", "--"]
@@ -566,8 +566,8 @@ while end == 0:
         data.close()
         data = open('/var/www/html/data/' + name1_update, 'a')
         writer = csv.writer(data)
-        writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "Number of effective Satellites",
-                         "Gain", "Acquisition time (ms)", "Color Temperature (k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+        writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "NumberSatellites",
+                         "Gain", "AcquisitionTime(ms)", "ColorTemperature(k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
         name1 = name1_update
 
     name1_update = name()
