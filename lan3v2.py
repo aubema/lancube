@@ -589,13 +589,13 @@ while end == 0:
             gain_selection(capteur[a], GS[a])
             lum = readluminance(capteur[a])
             ntry = 1
-            while ( lum['r']+lum['g']+lum['b'] > 1.3*lum['c']) and ( ntry < 999):
+            while (( lum['r']+lum['g']+lum['b'] > 1.3*lum['c']) or (lum['l'] < 0)) and ( ntry < 999):
                lum = readluminance(capteur[a])
                ntry += 1
             time_str = get_time()
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
-            lux = clux(lum['l'], gain, acqt)
+            lux = clux( , gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
             print("Corrected lux=", lux)
