@@ -588,8 +588,10 @@ while end == 0:
             time_selection(capteur[a], ATS[a], WTS[a])
             gain_selection(capteur[a], GS[a])
             lum = readluminance(capteur[a])
-            if ( lum['r']+lum['g']+lum['b'] > 1.5*lum['c']):
+            ntry = 1
+            while ( lum['r']+lum['g']+lum['b'] > 1.5*lum['c']) and ( ntry < 6):
                lum = readluminance(capteur[a])
+               ntry += 1
             time_str = get_time()
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
