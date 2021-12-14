@@ -51,7 +51,7 @@ TCS34725_REG_ATIME_614_4 = 0x00  # Atime = 614.4 ms, Cycles = 256
 TCS34725_REG_WTIME_4_8 = 0xFE  # Wtime = 4.8 ms, Cycles 2
 TCS34725_REG_WTIME_12 = 0xFB  # Wtime = 12 ms, Cycles 5
 TCS34725_REG_WTIME_40_8 = 0xEF  # Wtime = 40.8 ms, Cycles 17
-TCS34725_REG_WTIME_156 = 0xD3  # Wtime = 4156 ms , Cycles 65
+TCS34725_REG_WTIME_156 = 0xD3  # Wtime = 156 ms , Cycles 65
 TCS34725_REG_WTIME_614_4 = 0x00  # Wtime = 614.4 ms Cycles 256
 
 # TCS34725 Gain Configuration
