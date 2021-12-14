@@ -232,7 +232,7 @@ def get_tail(red, green, blue, clear):
 
     if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.5*clear):
         tail = "ER"
-    elif clear <= 99:
+    elif clear <= 199:
         tail = "UE"
     else:
         tail = "OK"
@@ -253,7 +253,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             current_waiting_time = TCS34725_REG_WTIME_4_8
             current_gain = TCS34725_REG_CONTROL_AGAIN_1
 
-    elif clear <= 99:
+    elif clear <= 199:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
 
         if current_gain == TCS34725_REG_CONTROL_AGAIN_1:
