@@ -230,7 +230,7 @@ def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, 
 def get_tail(red, green, blue, clear):
     tail = "--"
 
-    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red 100) or ( red+green+blue > 1.5*clear):
+    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.5*clear):
         tail = "ER"
     elif red <= 99 or green <= 99 or blue <= 99 or clear <= 99:
         tail = "UE"
