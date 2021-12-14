@@ -595,7 +595,7 @@ while end == 0:
             time_str = get_time()
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
-            lux = clux( , gain, acqt)
+            lux = clux(lum['l'] , gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'])
             print("Corrected lux=", lux)
