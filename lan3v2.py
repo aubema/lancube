@@ -230,7 +230,7 @@ def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, 
 def get_tail(red, green, blue, clear):
     tail = "--"
 
-    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.1*clear):
+    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.2*clear):
         tail = "ER"
     elif red <= 99 or green <= 99 or blue <= 99 or clear <= 99:
         tail = "UE"
@@ -244,7 +244,7 @@ def get_tail(red, green, blue, clear):
 
 def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time):
 
-    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.1*clear):
+    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.2*clear):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_2_4 and current_waiting_time == TCS34725_REG_WTIME_4_8 and current_gain == TCS34725_REG_CONTROL_AGAIN_1:
             print("There is just too much light...... :( ")
