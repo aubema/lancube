@@ -589,7 +589,7 @@ while end == 0:
             gain_selection(capteur[a], GS[a])
             lum = readluminance(capteur[a])
             ntry = 1
-            while ( lum['r']+lum['g']+lum['b'] > 1.5*lum['c']) and ( ntry < 99):
+            while ( lum['r']+lum['g']+lum['b'] > 1.5*lum['c']) and ( ntry < 999):
                lum = readluminance(capteur[a])
                ntry += 1
             time_str = get_time()
