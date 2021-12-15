@@ -260,24 +260,8 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             print("Abnormal counts...... :( ")
 #            current_gain = TCS34725_REG_CONTROL_AGAIN_1
 #            current_gain = TCS34725_REG_CONTROL_AGAIN_60
-            if current_acquisition_time == TCS34725_REG_ATIME_2_4:
-                 current_acquisition_time = TCS34725_REG_ATIME_9_6
-                 current_waiting_time = TCS34725_REG_WTIME_12
-            elif current_acquisition_time == TCS34725_REG_ATIME_9_6:
-                 current_acquisition_time = TCS34725_REG_ATIME_2_4
-                 current_waiting_time = TCS34725_REG_WTIME_4_8
-            elif current_acquisition_time == TCS34725_REG_ATIME_38_4:
-                 current_acquisition_time = TCS34725_REG_ATIME_9_6
-                 current_waiting_time = TCS34725_REG_WTIME_12
-            elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
-                 current_acquisition_time = TCS34725_REG_ATIME_38_4
-                 current_waiting_time = TCS34725_REG_WTIME_40_8
-            else:
-                 current_acquisition_time = TCS34725_REG_ATIME_153_6
-                 current_waiting_time = TCS34725_REG_WTIME_156   
-#            current_gain = TCS34725_REG_CONTROL_AGAIN_60
-            # 1
-
+            current_acquisition_time == TCS34725_REG_ATIME_2_4
+            current_waiting_time = TCS34725_REG_WTIME_4_8
     elif clear <= 99:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
 
