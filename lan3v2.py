@@ -86,10 +86,8 @@ def gain_selection(sensor, G):
 def readluminance(sensor):
     """Read data back from TCS34725_REG_CDATAL(0x94), 8 bytes, with TCS34725_COMMAND_BIT, (0x80)
     cData LSB, cData MSB, Red LSB, Red MSB, Green LSB, Green MSB, Blue LSB, Blue MSB"""
-    data[0] = 0 
-    data[2] = 0
-    data[4] = 0 
-    data[6] = 0
+    data = sensor.read_i2c_block_data(TCS34725_DEFAULT_ADDRESS,
+                                      TCS34725_REG_CDATAL | TCS34725_COMMAND_BIT, 8)
     ntry = 1
     while (data[0] != 0) and (data[2] != 0) and (data[4] != 0) and (data[6] != 0) and (ntry < 99):    
         data = sensor.read_i2c_block_data(TCS34725_DEFAULT_ADDRESS,
