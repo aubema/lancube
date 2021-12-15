@@ -236,7 +236,9 @@ def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, 
 def get_tail(red, green, blue, clear):
     tail = "--"
 
-    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.5*clear):
+    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100):
+        tail = "OE"
+    elif (red+green+blue > 1.3*clear) or (red+green+blue < 0.7*clear):
         tail = "ER"
     elif clear <= 99:
         tail = "UE"
@@ -250,13 +252,15 @@ def get_tail(red, green, blue, clear):
 
 def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time):
 
-    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or ( red+green+blue > 1.5*clear):
+    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_2_4 and current_waiting_time == TCS34725_REG_WTIME_4_8 and current_gain == TCS34725_REG_CONTROL_AGAIN_1:
             print("There is just too much light...... :( ")
+        elif (red+green+blue > 1.3*clear) or (red+green+blue < 0.7*clear):
+            print("Abnormal counts...... :( ")
         else:
             current_acquisition_time = TCS34725_REG_ATIME_2_4
-            current_waiting_time = TCS34725_REG_WTIME_4_8
+            current_waiting_time = TCS34725_REG_WTIME_4_8   
             current_gain = TCS34725_REG_CONTROL_AGAIN_1
 
     elif clear <= 99:
@@ -281,7 +285,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             current_acquisition_time = TCS34725_REG_ATIME_614_4
             current_waiting_time = TCS34725_REG_WTIME_614_4
         else:
-            print("There is just not enaugh light...... :( ")
+            print("There is just not enough light...... :( ")
 
     else:
         print("\b\bData have been correctly gathered")
