@@ -250,7 +250,7 @@ def get_tail(red, green, blue, clear):
 # Correction of gain and integration time
 
 
-def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time):
+def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time,sens):
 
     if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
@@ -262,8 +262,9 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         print("Abnormal counts...... :( ")
 #            current_gain = TCS34725_REG_CONTROL_AGAIN_1
 #            current_gain = TCS34725_REG_CONTROL_AGAIN_60
-        current_acquisition_time == TCS34725_REG_ATIME_2_4
-        current_waiting_time = TCS34725_REG_WTIME_4_8
+#        current_acquisition_time == TCS34725_REG_ATIME_2_4
+#        current_waiting_time = TCS34725_REG_WTIME_4_8
+         enable_selection(sens)
     elif clear <= 99:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
 
@@ -637,7 +638,7 @@ while end == 0:
                        time_str['sec'], future_lat, future_lon, future_alt, nbSats, gain, acqt, temp, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
 
             # Correction of the gain and integration time for sensor 1
-            corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
+            corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a], capteur[a])
             GS[a] = corr['c_g']
             ATS[a] = corr['c_at']
             WTS[a] = corr['c_wt']
