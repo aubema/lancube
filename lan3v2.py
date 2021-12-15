@@ -240,7 +240,7 @@ def get_tail(red, green, blue, clear):
         tail = "OE"
     elif (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear):
         tail = "ER"
-    elif clear <= 1099:
+    elif clear <= 299:
         tail = "UE"
     else:
         tail = "OK"
@@ -264,7 +264,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             current_acquisition_time = TCS34725_REG_ATIME_2_4
         else:
             print("There is just too much light...... :( ")
-    elif clear <= 1099:
+    elif clear <= 299:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
             current_acquisition_time = TCS34725_REG_ATIME_9_6
