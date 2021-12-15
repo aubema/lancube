@@ -290,7 +290,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         current_waiting_time = TCS34725_REG_WTIME_156
     elif current_acquisition_time == TCS34725_REG_ATIME_614_4:
         current_waiting_time = TCS34725_REG_WTIME_614_4
-
+    current_waiting_time = TCS34725_REG_WTIME_156
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
 
 
@@ -628,8 +628,7 @@ while end == 0:
             corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
             GS[a] = corr['c_g']
             ATS[a] = corr['c_at']
-#            WTS[a] = corr['c_wt']
-            WTS[a] = 100.
+            WTS[a] = corr['c_wt']
 
         if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
             whiteOff()
