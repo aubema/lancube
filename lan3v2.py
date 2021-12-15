@@ -628,7 +628,8 @@ while end == 0:
             corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
             GS[a] = corr['c_g']
             ATS[a] = corr['c_at']
-            WTS[a] = corr['c_wt']
+#            WTS[a] = corr['c_wt']
+            WTS[a] = 100.
 
         if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
             whiteOff()
