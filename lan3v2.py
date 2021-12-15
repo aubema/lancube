@@ -267,13 +267,13 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     elif clear <= 99:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
-            current_acquisition_time == TCS34725_REG_ATIME_9_6
+            current_acquisition_time = TCS34725_REG_ATIME_9_6
         elif current_acquisition_time == TCS34725_REG_ATIME_9_6 :
-            current_acquisition_time == TCS34725_REG_ATIME_38_4
+            current_acquisition_time = TCS34725_REG_ATIME_38_4
         elif current_acquisition_time == TCS34725_REG_ATIME_38_4 :
-            current_acquisition_time == TCS34725_REG_ATIME_153_6
+            current_acquisition_time = TCS34725_REG_ATIME_153_6
         elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
-            current_acquisition_time == TCS34725_REG_ATIME_614_4
+            current_acquisition_time = TCS34725_REG_ATIME_614_4
         else:
             print("There is just not enough light...... :( ")
     else:
