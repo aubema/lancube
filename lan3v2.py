@@ -254,20 +254,6 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
 
     if ((red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or (red+green+blue > 1.3*clear) or (red+green+blue < 0.7*clear)):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
-        if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
-            print("There is just too much light...... :( ")
-        elif current_acquisition_time == TCS34725_REG_ATIME_9_6 :
-            current_acquisition_time == TCS34725_REG_ATIME_2_4
-        elif current_acquisition_time == TCS34725_REG_ATIME_38_4 :
-            current_acquisition_time == TCS34725_REG_ATIME_9_6
-        elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
-            current_acquisition_time == TCS34725_REG_ATIME_38_4
-        else:
-            current_acquisition_time == TCS34725_REG_ATIME_153_6
-
-        enable_selection(sens)
-    elif clear <= 99:
-        print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_614_4:
             current_acquisition_time = TCS34725_REG_ATIME_153_6
         elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
@@ -277,11 +263,22 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         elif current_acquisition_time == TCS34725_REG_ATIME_9_6:
             current_acquisition_time = TCS34725_REG_ATIME_2_4
         else:
+            print("There is just too much light...... :( ")
+            enable_selection(sens)
+    elif clear <= 99:
+        print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
+        if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
+            current_acquisition_time == TCS34725_REG_ATIME_9_6
+        elif current_acquisition_time == TCS34725_REG_ATIME_9_6 :
+            current_acquisition_time == TCS34725_REG_ATIME_38_4
+        elif current_acquisition_time == TCS34725_REG_ATIME_38_4 :
+            current_acquisition_time == TCS34725_REG_ATIME_153_6
+        elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
+            current_acquisition_time == TCS34725_REG_ATIME_614_4
+        else:
             print("There is just not enough light...... :( ")
-
     else:
         print("\b\bData have been correctly gathered")
-
     if current_acquisition_time == TCS34725_REG_ATIME_2_4:
         current_waiting_time = TCS34725_REG_WTIME_4_8
     elif current_acquisition_time == TCS34725_REG_ATIME_9_6:
