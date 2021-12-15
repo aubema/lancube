@@ -88,7 +88,7 @@ def readluminance(sensor):
     cData LSB, cData MSB, Red LSB, Red MSB, Green LSB, Green MSB, Blue LSB, Blue MSB"""
     data = sensor.read_i2c_block_data(TCS34725_DEFAULT_ADDRESS,
                                       TCS34725_REG_CDATAL | TCS34725_COMMAND_BIT, 8)
-    if (data[0] == 0) or (data[2] == 0) or (data[4] == 0) or (data[6] == 0):
+    if (data[0] == 0):
        # possible saturation 
        cData = 3
        red = 1
@@ -597,7 +597,7 @@ while end == 0:
             gain_selection(capteur[a], GS[a])
             lum = readluminance(capteur[a])
             ntry = 1
-            while (( lum['r']+lum['g']+lum['b'] > 1.3*lum['c']) or (lum['r']+lum['g']+lum['b'] < 0.7*lum['c']) or (lum['l'] < 0)) and ( ntry < 999):
+            while (( lum['r']+lum['g']+lum['b'] > 1.3*lum['c']) or (lum['r']+lum['g']+lum['b'] < 0.7*lum['c']) or (lum['l'] < 0)) and ( ntry < 99):
                lum = readluminance(capteur[a])
                ntry += 1
             time_str = get_time()
