@@ -319,11 +319,11 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     if ((red >= sat or green >= sat or blue >= sat or clear >= sat) or (red == green and red == blue and red > 100) or (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear)):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_gain == TCS34725_REG_CONTROL_AGAIN_60:
-           current_gain = TCS34725_REG_CONTROL_AGAIN_16:
+           current_gain = TCS34725_REG_CONTROL_AGAIN_16
         elif current_gain == TCS34725_REG_CONTROL_AGAIN_16:
-           current_gain = TCS34725_REG_CONTROL_AGAIN_4:
+           current_gain = TCS34725_REG_CONTROL_AGAIN_4
         elif current_gain == TCS34725_REG_CONTROL_AGAIN_4:
-           current_gain = TCS34725_REG_CONTROL_AGAIN_1:  
+           current_gain = TCS34725_REG_CONTROL_AGAIN_1  
         elif current_acquisition_time == TCS34725_REG_TIME_256:
             current_acquisition_time = TCS34725_REG_TIME_128
         elif current_acquisition_time == TCS34725_REG_TIME_128:
@@ -345,11 +345,11 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     elif clear <= 199:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
         if current_gain == TCS34725_REG_CONTROL_AGAIN_1:
-           current_gain = TCS34725_REG_CONTROL_AGAIN_4:
+           current_gain = TCS34725_REG_CONTROL_AGAIN_4
         elif current_gain == TCS34725_REG_CONTROL_AGAIN_4:
-           current_gain = TCS34725_REG_CONTROL_AGAIN_16:
+           current_gain = TCS34725_REG_CONTROL_AGAIN_16
         elif current_gain == TCS34725_REG_CONTROL_AGAIN_16:
-           current_gain = TCS34725_REG_CONTROL_AGAIN_60:          
+           current_gain = TCS34725_REG_CONTROL_AGAIN_60          
         elif current_acquisition_time == TCS34725_REG_TIME_1:
             current_acquisition_time = TCS34725_REG_TIME_2
         elif current_acquisition_time == TCS34725_REG_TIME_2:
