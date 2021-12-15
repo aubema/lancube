@@ -258,7 +258,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             print("There is just too much light...... :( ")
         elif (red+green+blue > 1.3*clear) or (red+green+blue < 0.7*clear):
             print("Abnormal counts...... :( ")
-            current_gain = TCS34725_REG_CONTROL_AGAIN_60
+            current_gain = TCS34725_REG_CONTROL_AGAIN_16
             current_acquisition_time = TCS34725_REG_ATIME_2_4
             current_waiting_time = TCS34725_REG_WTIME_4_8
         else:
