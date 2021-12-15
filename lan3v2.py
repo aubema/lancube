@@ -252,39 +252,30 @@ def get_tail(red, green, blue, clear):
 
 def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time,sens):
 
-    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100):
+    if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or (red+green+blue > 1.3*clear) or (red+green+blue < 0.7*clear):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
-        if current_acquisition_time == TCS34725_REG_ATIME_2_4 and current_waiting_time == TCS34725_REG_WTIME_4_8 and current_gain == TCS34725_REG_CONTROL_AGAIN_1:
+        if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
             print("There is just too much light...... :( ")
-    elif (red+green+blue > 1.3*clear) or (red+green+blue < 0.7*clear):
-        print("Abnormal counts...... :( ")
-#            current_gain = TCS34725_REG_CONTROL_AGAIN_1
-#            current_gain = TCS34725_REG_CONTROL_AGAIN_60
-#        current_acquisition_time == TCS34725_REG_ATIME_2_4
-#        current_waiting_time = TCS34725_REG_WTIME_4_8
+        elif current_acquisition_time == TCS34725_REG_ATIME_9_6 :
+            current_acquisition_time == TCS34725_REG_ATIME_2_4
+        elif current_acquisition_time == TCS34725_REG_ATIME_38_4 :
+            current_acquisition_time == TCS34725_REG_ATIME_9_6
+        elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
+            current_acquisition_time == TCS34725_REG_ATIME_38_4
+        else:
+            current_acquisition_time == TCS34725_REG_ATIME_153_6
+
         enable_selection(sens)
     elif clear <= 99:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
-
-#        if current_gain == TCS34725_REG_CONTROL_AGAIN_1:
-#            current_gain = TCS34725_REG_CONTROL_AGAIN_4
-#        elif current_gain == TCS34725_REG_CONTROL_AGAIN_4:
-#            current_gain = TCS34725_REG_CONTROL_AGAIN_16
-#        elif current_gain == TCS34725_REG_CONTROL_AGAIN_16:
-#            current_gain = TCS34725_REG_CONTROL_AGAIN_60
-#        elif current_acquisition_time == TCS34725_REG_ATIME_2_4:
         if current_acquisition_time == TCS34725_REG_ATIME_2_4:
             current_acquisition_time = TCS34725_REG_ATIME_9_6
-            current_waiting_time = TCS34725_REG_WTIME_12
         elif current_acquisition_time == TCS34725_REG_ATIME_9_6:
             current_acquisition_time = TCS34725_REG_ATIME_38_4
-            current_waiting_time = TCS34725_REG_WTIME_40_8
         elif current_acquisition_time == TCS34725_REG_ATIME_38_4:
             current_acquisition_time = TCS34725_REG_ATIME_153_6
-            current_waiting_time = TCS34725_REG_WTIME_156
         elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
             current_acquisition_time = TCS34725_REG_ATIME_614_4
-            current_waiting_time = TCS34725_REG_WTIME_614_4
         else:
             print("There is just not enough light...... :( ")
 
