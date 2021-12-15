@@ -264,7 +264,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             current_acquisition_time = TCS34725_REG_ATIME_2_4
         else:
             print("There is just too much light...... :( ")
-            enable_selection(sens)
+            #enable_selection(sens)
     elif clear <= 99:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
