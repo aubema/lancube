@@ -286,9 +286,9 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         current_waiting_time = TCS34725_REG_WTIME_40_8
     elif current_acquisition_time == TCS34725_REG_ATIME_153_6:
         current_waiting_time = TCS34725_REG_WTIME_156
-    elif current_acquisition_time == TCS34725_REG_ATIME_614_4:
+    else:
         current_waiting_time = TCS34725_REG_WTIME_614_4
-
+    current_gain = TCS34725_REG_CONTROL_AGAIN_60
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
 
 
