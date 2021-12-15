@@ -264,7 +264,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
 #            current_gain = TCS34725_REG_CONTROL_AGAIN_60
 #        current_acquisition_time == TCS34725_REG_ATIME_2_4
 #        current_waiting_time = TCS34725_REG_WTIME_4_8
-         enable_selection(sens)
+        enable_selection(sens)
     elif clear <= 99:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
 
