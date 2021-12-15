@@ -238,9 +238,9 @@ def get_tail(red, green, blue, clear):
 
     if (red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100):
         tail = "OE"
-    elif (red+green+blue > 1.5*clear) or (red+green+blue < 0.7*clear):
+    elif (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear):
         tail = "ER"
-    elif clear <= 99:
+    elif clear <= 1099:
         tail = "UE"
     else:
         tail = "OK"
@@ -252,7 +252,7 @@ def get_tail(red, green, blue, clear):
 
 def correction(red, green, blue, clear, current_gain, current_acquisition_time, current_waiting_time):
 
-    if ((red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or (red+green+blue > 1.5*clear) or (red+green+blue < 0.7*clear)):
+    if ((red >= 40000 or green >= 40000 or blue >= 40000 or clear >= 40000) or (red == green and red == blue and red > 100) or (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear)):
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_614_4:
             current_acquisition_time = TCS34725_REG_ATIME_153_6
@@ -264,7 +264,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
             current_acquisition_time = TCS34725_REG_ATIME_2_4
         else:
             print("There is just too much light...... :( ")
-    elif clear <= 99:
+    elif clear <= 1099:
         print("ERROR = SENSOR UNDEREXPOSED : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_ATIME_2_4 :
             current_acquisition_time = TCS34725_REG_ATIME_9_6
