@@ -371,7 +371,6 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     else:
         print("\b\bData have been correctly gathered")
     current_waiting_time = current_acquisition_time
-    current_gain = TCS34725_REG_CONTROL_AGAIN_60
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
 
 
