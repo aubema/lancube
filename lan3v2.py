@@ -94,6 +94,15 @@ def readluminance(sensor):
     red = data[3] * 256 + data[2]
     green = data[5] * 256 + data[4]
     blue = data[7] * 256 + data[6]
+    
+    if data[0] == 0:
+       data = sensor.read_i2c_block_data(TCS34725_DEFAULT_ADDRESS,
+                                      TCS34725_REG_CDATAL | TCS34725_COMMAND_BIT, 8)    
+       cData = data[1] * 256 + data[0]
+       red = data[3] * 256 + data[2]
+       green = data[5] * 256 + data[4]
+       blue = data[7] * 256 + data[6]                                     
+                                              
 
     # Calculate luminance
     luminance = (-0.32466 * red) + (1.57837 * green) + (-0.73191 * blue)
@@ -290,7 +299,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         current_waiting_time = TCS34725_REG_WTIME_156
     elif current_acquisition_time == TCS34725_REG_ATIME_614_4:
         current_waiting_time = TCS34725_REG_WTIME_614_4
-    current_waiting_time = TCS34725_REG_WTIME_614_4
+
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
 
 
