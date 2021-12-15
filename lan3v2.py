@@ -88,8 +88,7 @@ def readluminance(sensor):
     cData LSB, cData MSB, Red LSB, Red MSB, Green LSB, Green MSB, Blue LSB, Blue MSB"""
     data = sensor.read_i2c_block_data(TCS34725_DEFAULT_ADDRESS,
                                       TCS34725_REG_CDATAL | TCS34725_COMMAND_BIT, 8)
-    ntry2 = 1
-    if (data[0] != 0) and (data[2] != 0) and (data[4] != 0) and (data[6] != 0):
+    if (data[0] == 0) and (data[2] == 0) and (data[4] == 0) and (data[6] == 0):
        # possible saturation 
        cData = 50000
        red = 50000
