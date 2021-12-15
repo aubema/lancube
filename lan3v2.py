@@ -90,10 +90,10 @@ def readluminance(sensor):
                                       TCS34725_REG_CDATAL | TCS34725_COMMAND_BIT, 8)
     if (data[0] == 0) or (data[2] == 0) or (data[4] == 0) or (data[6] == 0):
        # possible saturation 
-       cData = 0
-       red = 0
-       green = 0
-       blue = 0
+       cData = 1
+       red = 1
+       green = 1
+       blue = 1
     else:
        # Convert the data
        cData = data[1] * 256 + data[0]
