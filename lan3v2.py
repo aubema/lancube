@@ -317,6 +317,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     else:
         sat = SAT_1  
     if ((red >= sat or green >= sat or blue >= sat or clear >= sat) or (red == green and red == blue and red > 100) or (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear)):
+        # more than 2 is infrared lamps
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_gain == TCS34725_REG_CONTROL_AGAIN_60:
            current_gain = TCS34725_REG_CONTROL_AGAIN_16
@@ -606,27 +607,27 @@ name1_update = name1
 
 # GS = Gain Sensor (lowest possible)
 GS = [0, 0, 0, 0, 0]
-GS[0] = TCS34725_REG_CONTROL_AGAIN_60
-GS[1] = TCS34725_REG_CONTROL_AGAIN_60
-GS[2] = TCS34725_REG_CONTROL_AGAIN_60
-GS[3] = TCS34725_REG_CONTROL_AGAIN_60
-GS[4] = TCS34725_REG_CONTROL_AGAIN_60
+GS[0] = TCS34725_REG_CONTROL_AGAIN_16
+GS[1] = TCS34725_REG_CONTROL_AGAIN_16
+GS[2] = TCS34725_REG_CONTROL_AGAIN_16
+GS[3] = TCS34725_REG_CONTROL_AGAIN_16
+GS[4] = TCS34725_REG_CONTROL_AGAIN_16
 
 # ATS = Acquisition Time Sensor (fastest possible)
 ATS = [0, 0, 0, 0, 0]
-ATS[0] = TCS34725_REG_TIME_1
-ATS[1] = TCS34725_REG_TIME_1
-ATS[2] = TCS34725_REG_TIME_1
-ATS[3] = TCS34725_REG_TIME_1
-ATS[4] = TCS34725_REG_TIME_1
+ATS[0] = TCS34725_REG_TIME_128
+ATS[1] = TCS34725_REG_TIME_128
+ATS[2] = TCS34725_REG_TIME_128
+ATS[3] = TCS34725_REG_TIME_128
+ATS[4] = TCS34725_REG_TIME_128
 
 # WTS = Wainting Time Sensor (one step over ATS)
 WTS = [0, 0, 0, 0, 0]
-WTS[0] = TCS34725_REG_TIME_1
-WTS[1] = TCS34725_REG_TIME_1
-WTS[2] = TCS34725_REG_TIME_1
-WTS[3] = TCS34725_REG_TIME_1
-WTS[4] = TCS34725_REG_TIME_1
+WTS[0] = TCS34725_REG_TIME_128
+WTS[1] = TCS34725_REG_TIME_128
+WTS[2] = TCS34725_REG_TIME_128
+WTS[3] = TCS34725_REG_TIME_128
+WTS[4] = TCS34725_REG_TIME_128
 
 data = open('/var/www/html/data/' + name1, 'a')
 writer = csv.writer(data)
