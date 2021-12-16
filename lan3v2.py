@@ -230,6 +230,10 @@ def colour_temperature(r, g, b, c):
 #
 #    else:
 #        error = 1
+    ir = (r + g + b - c)/2
+    r = r - ir
+    g = g - ir
+    b = b - ir
 
     X = (-0.14282)*r + 1.54924*g + (-0.95641)*b
     Y = (-0.32466)*r + 1.57837*g + (-0.73191)*b
