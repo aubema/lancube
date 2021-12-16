@@ -223,13 +223,13 @@ def clux(lux, Ga, AT):
 def colour_temperature(r, g, b, c):
     error = 0
 
-    if c != 0:
-        r = r/c*255
-        g = g/c*255
-        b = b/c*255
-
-    else:
-        error = 1
+#    if c != 0:
+#        r = r/c*255
+#        g = g/c*255
+#        b = b/c*255
+#
+#    else:
+#        error = 1
 
     X = (-0.14282)*r + 1.54924*g + (-0.95641)*b
     Y = (-0.32466)*r + 1.57837*g + (-0.73191)*b
