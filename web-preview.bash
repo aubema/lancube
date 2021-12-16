@@ -1,10 +1,11 @@
 #!/bin/bash
-y=`date +%Y`
-mo=`date +%m`
-d=`date +%d`
+
 i=0
 while [ $i -lt 1 ]
-do 	grep "S1"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto1.tmp
+do      y=`date +%Y`
+        mo=`date +%m`
+        d=`date +%d`
+ 	grep "S1"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto1.tmp
 	grep "S2"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto2.tmp
 	grep "S3"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto3.tmp
 	grep "S4"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto4.tmp
