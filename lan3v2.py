@@ -206,7 +206,7 @@ def clux(lux, Ga, AT):
 	clux = 0
 
 	if Ga != 0 and AT != 0:
-		clux = lux / Ga / AT * 385
+		clux = lux / Ga / AT * 395
 		clux = "{:.2f}".format(clux)
 
 	else:
