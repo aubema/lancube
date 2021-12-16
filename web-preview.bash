@@ -23,6 +23,7 @@ do      y=`date +%Y`
 	echo "    <th>Sensor</th>" >> /var/www/html/index.html
 	echo "    <th>Gain</th>" >> /var/www/html/index.html
 	echo "    <th>Integ. Time</th>" >> /var/www/html/index.html
+	echo "    <th>CCT</th>" >> /var/www/html/index.html
 	echo "    <th>Lux</th>" >> /var/www/html/index.html
 	echo "    <th>R</th>" >> /var/www/html/index.html
 	echo "    <th>G</th>" >> /var/www/html/index.html
@@ -34,6 +35,7 @@ do      y=`date +%Y`
 	echo "    <th>"1"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
+	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -46,6 +48,7 @@ do      y=`date +%Y`
 	echo "    <th>"2"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
+	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -58,6 +61,7 @@ do      y=`date +%Y`
 	echo "    <th>"3"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
+	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -70,6 +74,7 @@ do      y=`date +%Y`
 	echo "    <th>"4"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
+	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -82,6 +87,7 @@ do      y=`date +%Y`
 	echo "    <th>"5"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
+	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
