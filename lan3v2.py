@@ -194,7 +194,7 @@ def num_acquisition_time(current_acquisition_time):
     elif current_acquisition_time == TCS34725_REG_TIME_128:
         acquisition_time = TIME_128
     elif current_acquisition_time == TCS34725_REG_TIME_256:
-        acquisition_time = TIME_266  
+        acquisition_time = TIME_256  
 
     return acquisition_time
 
