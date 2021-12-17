@@ -233,10 +233,12 @@ def calc_msi(r, g, b, c):
         dd = -0.0489
         ee = 0.3098
         ff = 0.0257
-        msi = aa + bb*bg + cc*rg + dd*bg*rg + ee*bg**2 + ff*rg**2        
+        msi = aa + bb*bg + cc*rg + dd*bg*rg + ee*bg**2 + ff*rg**2   
+        msi="{:.2f}".format(msi)     
     else:
         error = 1
-        msi = 0
+	msi = str(msi)
+	msi = "N/A"
 
     return msi
 
