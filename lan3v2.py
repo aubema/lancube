@@ -237,8 +237,8 @@ def calc_msi(r, g, b, c):
         msi="{:.2f}".format(msi)     
     else:
         error = 1
-	msi = str(msi)
-	msi = "N/A"
+        msi = str(msi)
+        msi = "N/A"
 
     return msi
 
