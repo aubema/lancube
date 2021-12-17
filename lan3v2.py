@@ -215,7 +215,29 @@ def clux(lux, Ga, AT):
 
 	return clux     
 
+# Calculate MSI
 
+def calc_msi(r, g, b, c):
+    error = 0
+
+    if g != 0:
+        ir = (r + g + b - c)/2
+        r = r - ir
+        g = g - ir
+        b = b - ir
+        rg = r/g
+        rb = r/b
+    else:
+        error = 1
+    a = 0.0769
+    b = 0.6023
+    c = -0.1736
+    d = -0.0489
+    e = 0.3098
+    f = 0.0257
+    msi = a + b*bg + c*rg + d*bg*rg + e*bg**2 + f*rg**2
+
+    return msi
 
 # Calculate the color temperature
 
@@ -637,7 +659,7 @@ data = open('/var/www/html/data/' + name1, 'a')
 writer = csv.writer(data)
 if os.stat('/var/www/html/data/' + name1).st_size <= 0:
     writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "NumberSatellites",
-                    "Gain", "AcquisitionTime(ms)", "ColorTemperature(k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+                    "Gain", "AcquisitionTime(ms)", "ColorTemperature(k)", "MSI", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
 
 # Initialize values of the variables
 tail = ["--", "--", "--", "--", "--"]
@@ -669,7 +691,7 @@ while end == 0:
         data = open('/var/www/html/data/' + name1_update, 'a')
         writer = csv.writer(data)
         writer.writerow(["Sensor", "Year", "Month", "Day", "Hour", "Minute", "Second", "Latitude", "Longitude", "Altitude", "NumberSatellites",
-                         "Gain", "AcquisitionTime(ms)", "ColorTemperature(k)", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
+                         "Gain", "AcquisitionTime(ms)", "ColorTemperature(k)", "MSI", "lux", "Red", "Green", "Blue", "Clear", "Flag"])
         name1 = name1_update
 
     name1_update = name()
@@ -699,6 +721,7 @@ while end == 0:
             acqt = num_acquisition_time(ATS[a])
             lux = clux(lum['l'] , gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
+            msi_index = calc_msi(lum['r'], lum['g'], lum['b'], lum['c'])
             tail[a] = get_tail(lum['r'], lum['g'], lum['b'], lum['c'], ATS[a])
             print("Corrected lux=", lux)
             # Used for gps
@@ -724,7 +747,7 @@ while end == 0:
 
             # write the line of the sensor 1 in the csv file
             write_data(writer, a+1, time_str['year'], time_str['month'], time_str['day'], time_str['hour'], time_str['min'],
-                       time_str['sec'], future_lat, future_lon, future_alt, nbSats, gain, acqt, temp, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
+                       time_str['sec'], future_lat, future_lon, future_alt, nbSats, gain, acqt, temp, msi_index, lux, lum['r'], lum['g'], lum['b'], lum['c'], tail[a])
 
             # Correction of the gain and integration time for sensor 1
             corr = correction(lum['r'], lum['g'], lum['b'], lum['c'], GS[a], ATS[a], WTS[a])
