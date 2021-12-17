@@ -226,7 +226,7 @@ def calc_msi(r, g, b, c):
         g = g - ir
         b = b - ir
         bg = b/g
-        rb = r/g
+        rg = r/g
     else:
         error = 1
     a = 0.0769
