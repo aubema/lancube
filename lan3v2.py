@@ -227,15 +227,16 @@ def calc_msi(r, g, b, c):
         b = b - ir
         bg = b/g
         rg = r/g
+        aa = 0.0769
+        bb = 0.6023
+        cc = -0.1736
+        dd = -0.0489
+        ee = 0.3098
+        ff = 0.0257
+        msi = aa + bb*bg + cc*rg + dd*bg*rg + ee*bg**2 + ff*rg**2        
     else:
         error = 1
-    a = 0.0769
-    b = 0.6023
-    c = -0.1736
-    d = -0.0489
-    e = 0.3098
-    f = 0.0257
-    msi = a + b*bg + c*rg + d*bg*rg + e*bg**2 + f*rg**2
+        msi = 0
 
     return msi
 
