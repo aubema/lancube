@@ -45,7 +45,7 @@ do      y=`date +%Y`
 	echo "    <th>"$c"</th>" >> /var/www/html/index.html
 	echo "    <th>"$tail"</th>" >> /var/www/html/index.html
 	
-	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto2.tmp
+	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp msi lux r g b c tail bidon < toto2.tmp
 	echo "  <tr>" >> /var/www/html/index.html
 	echo "    <th>"2"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
@@ -59,7 +59,7 @@ do      y=`date +%Y`
 	echo "    <th>"$c"</th>" >> /var/www/html/index.html
 	echo "    <th>"$tail"</th>" >> /var/www/html/index.html	
 
-	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto3.tmp
+	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp msi lux r g b c tail bidon < toto3.tmp
 	echo "  <tr>" >> /var/www/html/index.html
 	echo "    <th>"3"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
@@ -73,7 +73,7 @@ do      y=`date +%Y`
 	echo "    <th>"$c"</th>" >> /var/www/html/index.html
 	echo "    <th>"$tail"</th>" >> /var/www/html/index.html
 	
-	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto4.tmp
+	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp msi lux r g b c tail bidon < toto4.tmp
 	echo "  <tr>" >> /var/www/html/index.html
 	echo "    <th>"4"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
@@ -87,7 +87,7 @@ do      y=`date +%Y`
 	echo "    <th>"$c"</th>" >> /var/www/html/index.html
 	echo "    <th>"$tail"</th>" >> /var/www/html/index.html
 	
-	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto5.tmp
+	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp msi lux r g b c tail bidon < toto5.tmp
 	echo "  <tr>" >> /var/www/html/index.html
 	echo "    <th>"5"</th>" >> /var/www/html/index.html
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
