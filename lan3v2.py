@@ -281,10 +281,10 @@ def colour_temperature(r, g, b, c):
 # Write everything in the .csv file
 
 
-def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, lux, r, g, b, c, tail):
+def write_data(writer, sensor, year, month, day, hour, min, sec, lat, lon, alt, nSat, ga, acqt, temp, msii lux, r, g, b, c, tail):
 
     writer.writerow(["S" + str(sensor), year, month, day, hour, min, sec, lat,
-                    lon, alt, nSat, ga, acqt, temp, lux, r, g, b, c, tail])
+                    lon, alt, nSat, ga, acqt, temp, msii, lux, r, g, b, c, tail])
 
 
 # Check if the data is over exposed, under exposed or correctly exposed and return the corresponding tail

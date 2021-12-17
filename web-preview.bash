@@ -10,7 +10,7 @@ do      y=`date +%Y`
 	grep "S3"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto3.tmp
 	grep "S4"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto4.tmp
 	grep "S5"  /var/www/html/data/$y-$mo-$d.csv | tail -1 | sed 's/,/ /g' > toto5.tmp	
-	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp lux r g b c tail bidon < toto1.tmp
+	read bidon year month day hour min sec  lat lon alt nSat ga acqt temp msi lux r g b c tail bidon < toto1.tmp
 	echo "<html>" > /var/www/html/index.html
 	echo "<head>" > /var/www/html/index.html
 	echo "<body>" >> /var/www/html/index.html
@@ -24,6 +24,7 @@ do      y=`date +%Y`
 	echo "    <th>Gain</th>" >> /var/www/html/index.html
 	echo "    <th>Integ. Time</th>" >> /var/www/html/index.html
 	echo "    <th>CCT</th>" >> /var/www/html/index.html
+	echo "    <th>MSI</th>" >> /var/www/html/index.html
 	echo "    <th>Lux</th>" >> /var/www/html/index.html
 	echo "    <th>R</th>" >> /var/www/html/index.html
 	echo "    <th>G</th>" >> /var/www/html/index.html
@@ -36,6 +37,7 @@ do      y=`date +%Y`
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
 	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
+	echo "    <th>"$msi"</th>" >> /var/www/html/index.html	
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -49,6 +51,7 @@ do      y=`date +%Y`
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
 	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
+        echo "    <th>"$msi"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -62,6 +65,7 @@ do      y=`date +%Y`
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
 	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
+	echo "    <th>"$msi"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -75,6 +79,7 @@ do      y=`date +%Y`
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
 	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
+	echo "    <th>"$msi"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
@@ -88,6 +93,7 @@ do      y=`date +%Y`
 	echo "    <th>"$ga"</th>" >> /var/www/html/index.html
 	echo "    <th>"$acqt"</th>" >> /var/www/html/index.html
 	echo "    <th>"$temp"</th>" >> /var/www/html/index.html
+	echo "    <th>"$msi"</th>" >> /var/www/html/index.html
 	echo "    <th>"$lux"</th>" >> /var/www/html/index.html
 	echo "    <th>"$r"</th>" >> /var/www/html/index.html
 	echo "    <th>"$g"</th>" >> /var/www/html/index.html
