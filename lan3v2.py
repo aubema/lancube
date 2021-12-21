@@ -759,8 +759,13 @@ while end == 0:
 
         if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
             whiteOff()
-            blueOn()
+            if nbSats > 3:
+               blueOn()
+            else:
+               blueOn()
+               redOn()
             time.sleep(largest(ATS)/1000)
+            
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats <= 3:
             whiteOff()
             yellowOn()
