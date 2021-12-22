@@ -8,7 +8,7 @@ import threading
 import serial
 import pynmea2
 
-# Get I2C bus
+# Get I2C bus 
 capteur = [0, 0, 0, 0, 0]
 capteur[0] = smbus.SMBus(7)
 capteur[1] = smbus.SMBus(3)
