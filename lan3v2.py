@@ -310,7 +310,7 @@ def get_tail(red, green, blue, clear, current_acquisition_time):
         sat = SAT_2  
     else:
         sat = SAT_1  
-    if (red >= sat or green >= sat or blue >= sat or clear >= sat):
+    if (red >= sat or green >= sat or blue >= sat or clear >= sat/2):
         tail = "OE"
     elif (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear):
         tail = "ER"
