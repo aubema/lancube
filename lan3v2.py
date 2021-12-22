@@ -723,6 +723,8 @@ while end == 0:
             acqt = num_acquisition_time(ATS[a])
             if acqt > tslp:
                tslp = acqt
+            else:
+               tslp = 0.2
             lux = clux(lum['l'] , gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             msi_index = calc_msi(lum['r'], lum['g'], lum['b'], lum['c'])
