@@ -219,12 +219,11 @@ def clux(lux, Ga, AT):
 
 def calc_msi(r, g, b, c):
     error = 0
-
-    if g != 0:
-        ir = (r + g + b - c)/2
-        r = r - ir
-        g = g - ir
-        b = b - ir
+    r = r - ir
+    g = g - ir
+    b = b - ir
+    ir = (r + g + b - c)/2    
+    if g > 0 :
         bg = b/g
         rg = r/g
         aa = 0.0769
