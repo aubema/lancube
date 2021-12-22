@@ -774,6 +774,7 @@ while end == 0:
             whiteOff()
             greenOn()
 #            time.sleep(0.2)
+        print("sleep=",largest(ATS)/1000)
         if largest(ATS)/1000 < 0.2:
            time.sleep(0.2)
         else:
