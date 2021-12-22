@@ -310,7 +310,7 @@ def get_tail(red, green, blue, clear, current_acquisition_time):
         sat = SAT_2  
     else:
         sat = SAT_1  
-    if (red >= sat or green >= sat or blue >= sat or clear >= sat/2):
+    if (red >= sat or green >= sat or blue >= sat or clear >= sat):
         tail = "OE"
     elif (red+green+blue > 2*clear) or (red+green+blue < 0.7*clear):
         tail = "ER"
@@ -344,7 +344,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         sat = SAT_2  
     else:
         sat = SAT_1  
-    if (red >= sat or green >= sat or blue >= sat or clear >= sat):
+    if (red >= sat or green >= sat or blue >= sat or clear >= sat/2):
         # more than 2 is infrared lamps
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_acquisition_time == TCS34725_REG_TIME_256:
