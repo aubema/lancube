@@ -708,7 +708,7 @@ while end == 0:
 
     if button_status == 1:
         print("-----------------------------data ", i+1, "------------------------------------")
-
+        tslp=0.2
         for a in range(5):
             enable_selection(capteur[a])
             time_selection(capteur[a], ATS[a], WTS[a])
@@ -721,6 +721,8 @@ while end == 0:
             time_str = get_time()
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
+            if acqt > tslp:
+               tslp = acqt
             lux = clux(lum['l'] , gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             msi_index = calc_msi(lum['r'], lum['g'], lum['b'], lum['c'])
@@ -764,17 +766,17 @@ while end == 0:
             else:
                blueOn()
                redOn()
-            time.sleep(0.2)
+
             
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats <= 3:
             whiteOff()
             yellowOn()
-            time.sleep(0.2)
+ 
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats > 3:
             whiteOff()
             greenOn()
-            time.sleep(0.2)
-
+ 
+        time.sleep(tslp)
         i = i + 1
 
     elif button_status == 0:
