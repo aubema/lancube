@@ -726,6 +726,7 @@ while end == 0:
                tslp = acqt/1000
             else:
                tslp = 0.2
+            print("tslp=",tslp)
             lux = clux(lum['l'] , gain, acqt)
             temp = colour_temperature(lum['r'], lum['g'], lum['b'], lum['c'])
             msi_index = calc_msi(lum['r'], lum['g'], lum['b'], lum['c'])
