@@ -400,21 +400,21 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     else:
         print("\b\bData have been correctly gathered")
     if current_acquisition_time == TCS34725_REG_TIME_1:
-        current_waiting_time = TCS34725_REG_TIME_1
-    elif current_acquisition_time == TCS34725_REG_TIME_2:
         current_waiting_time = TCS34725_REG_TIME_2
-    elif current_acquisition_time == TCS34725_REG_TIME_4:
+    elif current_acquisition_time == TCS34725_REG_TIME_2:
         current_waiting_time = TCS34725_REG_TIME_4
-    elif current_acquisition_time == TCS34725_REG_TIME_8:
+    elif current_acquisition_time == TCS34725_REG_TIME_4:
         current_waiting_time = TCS34725_REG_TIME_8
-    elif current_acquisition_time == TCS34725_REG_TIME_16:
+    elif current_acquisition_time == TCS34725_REG_TIME_8:
         current_waiting_time = TCS34725_REG_TIME_16
-    elif current_acquisition_time == TCS34725_REG_TIME_32:
+    elif current_acquisition_time == TCS34725_REG_TIME_16:
         current_waiting_time = TCS34725_REG_TIME_32
+    elif current_acquisition_time == TCS34725_REG_TIME_32:
+        current_waiting_time = TCS34725_REG_TIME_64
     elif current_acquisition_time == TCS34725_REG_TIME_64:
-        current_waiting_time = TCS34725_REG_TIME_64            
+        current_waiting_time = TCS34725_REG_TIME_128            
     elif current_acquisition_time == TCS34725_REG_TIME_128:
-        current_waiting_time = TCS34725_REG_TIME_128
+        current_waiting_time = TCS34725_REG_TIME_256
     else:
         current_waiting_time = TCS34725_REG_TIME_256 
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
@@ -757,7 +757,6 @@ while end == 0:
             ATS[a] = corr['c_at']
             WTS[a] = corr['c_wt']
 
-
         if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
             whiteOff()
             if nbSats > 3:
@@ -765,15 +764,17 @@ while end == 0:
             else:
                blueOn()
                redOn()
+            time.sleep(largest(ATS)/1000)
+            
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats <= 3:
             whiteOff()
             yellowOn()
+            time.sleep(0.2)
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats > 3:
             whiteOff()
             greenOn()
-        tsleep=largest(ATS)/1000+0.1
-        print("sleep=",tsleep)
-        time.sleep(tsleep)
+            time.sleep(0.2)
+
         i = i + 1
 
     elif button_status == 0:
