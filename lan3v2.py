@@ -344,7 +344,7 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
         sat = SAT_2  
     else:
         sat = SAT_1  
-    if ((red >= sat or green >= sat or blue >= sat or clear >= sat):
+    if (red >= sat or green >= sat or blue >= sat or clear >= sat):
         # more than 2 is infrared lamps
         print("ERROR - SENSOR SATURATION : Trying to correct the settings...")
         if current_gain == TCS34725_REG_CONTROL_AGAIN_60:
