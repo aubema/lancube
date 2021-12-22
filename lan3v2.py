@@ -722,7 +722,7 @@ while end == 0:
             gain = num_gain(GS[a])
             acqt = num_acquisition_time(ATS[a])
             print(acqt)
-            if acqt > tslp:
+            if acqt/1000 > tslp:
                tslp = acqt
             else:
                tslp = 0.2
