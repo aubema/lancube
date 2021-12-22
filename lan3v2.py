@@ -400,21 +400,21 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     else:
         print("\b\bData have been correctly gathered")
     if current_acquisition_time == TCS34725_REG_TIME_1:
-        current_waiting_time = TCS34725_REG_TIME_2
+        current_waiting_time = TCS34725_REG_TIME_1
     elif current_acquisition_time == TCS34725_REG_TIME_2:
-        current_waiting_time = TCS34725_REG_TIME_4
+        current_waiting_time = TCS34725_REG_TIME_2
     elif current_acquisition_time == TCS34725_REG_TIME_4:
-        current_waiting_time = TCS34725_REG_TIME_8
+        current_waiting_time = TCS34725_REG_TIME_4
     elif current_acquisition_time == TCS34725_REG_TIME_8:
-        current_waiting_time = TCS34725_REG_TIME_16
+        current_waiting_time = TCS34725_REG_TIME_8
     elif current_acquisition_time == TCS34725_REG_TIME_16:
-        current_waiting_time = TCS34725_REG_TIME_32
+        current_waiting_time = TCS34725_REG_TIME_16
     elif current_acquisition_time == TCS34725_REG_TIME_32:
-        current_waiting_time = TCS34725_REG_TIME_64
+        current_waiting_time = TCS34725_REG_TIME_32
     elif current_acquisition_time == TCS34725_REG_TIME_64:
-        current_waiting_time = TCS34725_REG_TIME_128            
+        current_waiting_time = TCS34725_REG_TIME_64            
     elif current_acquisition_time == TCS34725_REG_TIME_128:
-        current_waiting_time = TCS34725_REG_TIME_256
+        current_waiting_time = TCS34725_REG_TIME_128
     else:
         current_waiting_time = TCS34725_REG_TIME_256 
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
