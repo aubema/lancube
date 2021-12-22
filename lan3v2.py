@@ -420,25 +420,6 @@ def correction(red, green, blue, clear, current_gain, current_acquisition_time, 
     return {'c_g': current_gain, 'c_at': current_acquisition_time, 'c_wt': current_waiting_time}
 
 
-def largest(arr):
-    num = [0, 0, 0, 0, 0]
-
-    num[0] = num_acquisition_time(arr[0])
-    num[1] = num_acquisition_time(arr[1])
-    num[2] = num_acquisition_time(arr[2])
-    num[3] = num_acquisition_time(arr[3])
-    num[4] = num_acquisition_time(arr[4])
-# Initialize maximum element
-
-    max = num[0]
-
-# Traverse array elements from second and compare every element with current max
-    for i in range(5):
-        if num[i] > max:
-            max = num[i]
-    return max
-
-
 # setup GPIO end pins for LED
 redPin = 38
 greenPin = 40
