@@ -764,17 +764,20 @@ while end == 0:
             else:
                blueOn()
                redOn()
-            time.sleep(largest(ATS)/1000)
+#            time.sleep(largest(ATS)/1000)
             
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats <= 3:
             whiteOff()
             yellowOn()
-            time.sleep(0.2)
+#            time.sleep(0.2)
         elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats > 3:
             whiteOff()
             greenOn()
-            time.sleep(0.2)
-
+#            time.sleep(0.2)
+        if largest(ATS)/1000 < 0.2:
+           time.sleep(0.2)
+        else:
+           time.sleep(largest(ATS)/1000)
         i = i + 1
 
     elif button_status == 0:
