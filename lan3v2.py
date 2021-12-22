@@ -774,11 +774,9 @@ while end == 0:
             whiteOff()
             greenOn()
 #            time.sleep(0.2)
-        print("sleep=",largest(ATS)/1000)
-        if largest(ATS)/1000 < 0.2:
-           time.sleep(0.2)
-        else:
-           time.sleep(largest(ATS)/1000)
+        tsleep=largest(ATS)/1000+0.1
+        print("sleep=",tsleep)
+        time.sleep(tsleep)
         i = i + 1
 
     elif button_status == 0:
