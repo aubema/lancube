@@ -723,7 +723,7 @@ while end == 0:
             acqt = num_acquisition_time(ATS[a])
             print(acqt)
             if acqt/1000 > tslp:
-               tslp = acqt
+               tslp = acqt/1000
             else:
                tslp = 0.2
             lux = clux(lum['l'] , gain, acqt)
