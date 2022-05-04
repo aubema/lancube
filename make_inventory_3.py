@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 from scipy.ndimage import gaussian_filter1d
-from src.cleaning_data import *
+from cleaning_data import *
 import warnings
 import datetime
 warnings.filterwarnings("ignore",category=RuntimeWarning)
@@ -55,11 +55,17 @@ df35 = pd.DataFrame({ 'Value':   (df3['Value'].values - df5['Value'].values),
                       'lux' : (df3['lux'].values - df5['lux'].values) })
 
 # Filtre Gaussien
+df1['Value'] = gaussian_filter1d(df1['Value'].values, 0.4)
+df35['Value'] = gaussian_filter1d(df35['Value'].values, 0.4)
+
 df1['MA'] = gaussian_filter1d(df1['Value'].values, 0.4)
 df35['MA'] = gaussian_filter1d(df35['Value'].values, 0.4)
 
 S1_value,  S1_dist  =  df1['Value'].values,  df1['Traveled Distance'].values
 S35_value, S35_dist =  df35['Value'].values, df35['Distance'].values
+
+S1_value_MA,  S1_dist  =  df1['MA'].values,  df1['Traveled Distance'].values
+S35_value_MA, S35_dist =  df35['MA'].values, df35['Distance'].values
 
 
 
@@ -125,8 +131,8 @@ def find_prime(index_peaks, values, dist):
     for j, i in enumerate(idx):
         
         idxp = np.argwhere( (dist > dist[i]+3) & (dist < dist[i]+30) ).flatten()
-        idxp = idxp[abs(values[idxp]) < abs(values[i]*0.95)] # minimal decrease of 10%
-        idxp = idxp[abs(values[idxp]) > abs(values[i]*0.30)] # maximal decrease of 70%   
+        idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%
+        idxp = idxp[abs(values[idxp]) > abs(values[i]*0.40)] # maximal decrease of 70%   
         idxp = idxp[values[idxp]/values[i] > 0] # make sure to have the same sign for both
        
                 
@@ -136,8 +142,8 @@ def find_prime(index_peaks, values, dist):
             
         else:
             idxp = np.argwhere((dist > dist[i]-30) & (dist < dist[i]-3) ).flatten()  
-            idxp = idxp[abs(values[idxp]) < abs(values[i]*0.95)] # minimal decrease of 10%     
-            idxp = idxp[abs(values[idxp]) > abs(values[i]*0.30)] # maximal decrease of 70%          
+            idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%     
+            idxp = idxp[abs(values[idxp]) > abs(values[i]*0.40)] # maximal decrease of 70%          
             idxp = idxp[values[idxp]/values[i] > 0] # make sure to have the same sign for both     
             
             if len(idxp > 0): # si on trouve un idx back
@@ -168,9 +174,11 @@ idx_E35p, idx_E35, out_E35, _del     = find_prime(idx_E35, S35_value, S35_dist)
 
 # ------------------------------------------------
 plt.plot(df1['Traveled Distance'], df1['Value'], label='S1')
+plt.plot(df1['Traveled Distance'], df1['MA'],    label='MA')
+
 plt.plot(df1['Traveled Distance'].iloc[idx_E1], df1['Value'].iloc[idx_E1],  'o', c='red')
 plt.plot(df1['Traveled Distance'].iloc[idx_ES1], df1['Value'].iloc[idx_ES1],  'o', c='green')
-
+plt.legend()
 plt.show()
 # ------------------------------------------------
 
@@ -264,28 +272,6 @@ idx_closest = np.argsort(dist_color)[:,:1]
 closest_tech = df_lights['tech'].values[idx_closest]
 
 
-
-def correction(tech, h, H , D):
-    
-    """ Trouver comment garder les  """
-    
-    print(tech)
-    arr = np.zeros(tech.size)
-    
-    a0 = 1
-    
-    arr[tech]
-    
-    if tech[:3] == 'LED':
-        a1, a2, a3 = 0.00187, 1.807e-5, 2.045e-6
-    else:
-        a1, a2, a3 = 0.00469, -0.000223, 3.729e-6
-         
-    theta = np.arctan(D / (H-h)) * (180 / np.pi)
-    
-    return a0 + a1*theta + a2*theta**2 + a3*theta**3
-
-
 # Distance between peaks and prime
 D_simul = abs(S1_dist[idx_ES1] - S1_dist[idx_ES1p])
 D_S1    = abs(ED1  - ED1p)
@@ -304,23 +290,6 @@ H_S1    = (D_S1 * ((EV1p/EV1)**(1/3)) / np.sqrt(1 - ((EV1p/EV1)**(2/3))) ) + h  
 H_S35   = np.full(len(D_S35), h)  # lights with same hights as Lan3
 
 
-for i in range(10):
-    print(i)
-    
-    # Horizontal distance between Lan3 and lights fixture
-    d_simul = D_simul / np.sqrt( ( ((EVS1/EVS1p) * correction(closest_tech[:len(idx_ES1)], h, H_simul, D_simul))**(2/3) * ( ((EVS1**2)/ (EVS35)**2)+1 ) \
-                - ((EVS1**2)/ (EVS35)**2)-1) ) # (Eq. 14)
-    d_S1    = np.full(len(D_S1), 0)
-    d_S35   = D_S35 * abs(EV35p/EV35)**(1/3) / np.sqrt(1 - ( abs(EV35p/EV35)**(2/3) ) )  # (Eq. 27)
-
-    # Light fixture height.
-    H_simul = d_simul * (EVS1/abs(EVS35)) + h  # (Eq. 15)
-    H_S1    = (D_S1 * (((EV1p/EV1)/correction(closest_tech[len(idx_ES1):-len(idx_E35)], h, H_S1, D_S1))**(1/3)) / np.sqrt(1 - ((EV1p/EV1)/correction(closest_tech[len(idx_ES1):-len(idx_E35)], h, H_S1, D_S1))**(2/3))) + h  # (Eq. 21)
-    H_S35   = np.full(len(D_S35), h)  # lights with same hights as Lan3
-
-
-
-
 # Line between light and lancube (Orthogonal) 
 EOS1 = df1['lux'].iloc[idx_ES1].values * (np.sqrt((H_simul - h)**2 + d_simul**2)) / (H_simul - h)  # (Eq. 16)
 EO1  = df1['lux'].iloc[idx_E1].values
@@ -334,7 +303,7 @@ H = np.concatenate([H_simul, H_S1, H_S35])
 side = np.concatenate([side_simul, side_S1, side_S35])
 EV   = np.concatenate([EVS1, EV1, EV35])
 EO   = np.concatenate([EOS1, EO1, EO35])
-out = np.concatenate([out_ES1, out_E1, out_E35])
+out  = np.concatenate([out_ES1, out_E1, out_E35])
 
 
 # Accessing corrresponding ULOR
@@ -343,9 +312,6 @@ for i, techs in enumerate(closest_tech):
     ULOR[i] = df_lights.loc[df_lights['tech'] == techs[0], 'ULOR'].iloc[0]
 
 flux = (2*np.pi*K*EO) * (d**2 + (H-h)**2) / (1 - ULOR)
-    
-    # return D, d, H, side, EV, EO, out, flux
-
 
 
 
