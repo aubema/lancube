@@ -163,8 +163,8 @@ def find_prime(index_peaks, values, dist):
     for j, i in enumerate(idx):
         
         idxp = np.argwhere( (dist > dist[i]+2) & (dist < dist[i]+20) ).flatten()
-        # idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%
-        # idxp = idxp[abs(values[idxp]) > abs(values[i]*0.40)] # maximal decrease of 60%   
+        idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%
+        idxp = idxp[abs(values[idxp]) > abs(values[i]*0.10)] # maximal decrease of 60%   
         # idxp = idxp[idxp > 0] 
                 
         if len(idxp > 0): # si on trouve un idx front
@@ -173,8 +173,8 @@ def find_prime(index_peaks, values, dist):
             
         else:
             idxp = np.argwhere((dist > dist[i]-20) & (dist < dist[i]-2) ).flatten()  
-            # idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%     
-            # idxp = idxp[abs(values[idxp]) > abs(values[i]*0.40)] # maximal decrease of 60%          
+            idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%     
+            idxp = idxp[abs(values[idxp]) > abs(values[i]*0.10)] # maximal decrease of 60%          
             # idxp = idxp[idxp > 0]
 
             if len(idxp > 0): # si on trouve un idx back
