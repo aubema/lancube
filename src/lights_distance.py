@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 def distance(lat_obs, lon_obs, arr_lats, arr_lon):
-    return np.sqrt((lat_obs - arr_lats)**2+((lon_obs-arr_lon)*np.cos(arr_lon))**2)
+    return np.sqrt((lat_obs - arr_lats)**2+((lon_obs-arr_lon)*np.cos(arr_lats*(np.pi/180)))**2)
 
 
 def find_close_lights(df, df_invent, nb=10, h=2):    
@@ -30,13 +30,12 @@ def find_close_lights(df, df_invent, nb=10, h=2):
             list_dist.append(distance(lat_obs, lon_obs, lat_lights, lon_lights))
         
         arr_dist = np.array(list_dist)
-        idx_dist = np.argwhere([arr_dist < 0.005])
+        idx_dist = np.argwhere([arr_dist < 0.05])
         idx_dist = idx_dist[idx_dist != 0]
         
         lat.append(df_invent['lat_lights'].iloc[idx_dist].values)
         lon.append(df_invent['lon_lights'].iloc[idx_dist].values)
         
-        # Mean of the 10 closest lights
         df = df_invent.iloc[idx_dist]
         
         # on considere lights seulement > 4m
@@ -46,9 +45,11 @@ def find_close_lights(df, df_invent, nb=10, h=2):
     
 
 
-def filter_multip_detections(df_invent):
+def filter_multip_detections(df_invent, prec_localisation):
 
     list_duplicat = []
+    # limite par le GPS
+    theta_min = (prec_localisation * 180) / (np.pi * 6373000)
 
     for i in df_invent.index.values:
         
@@ -69,11 +70,11 @@ def filter_multip_detections(df_invent):
                     list_dist.append(distance(lat_obs, lon_obs, lat_lights, lon_lights))
             
             arr_dist = np.array(list_dist)
-            idx_dist = np.argwhere(arr_dist < 0.0001).flatten()
+            idx_dist = np.argwhere(arr_dist < theta_min).flatten()
             df = df_invent.iloc[idx_dist]
             
             # Look for similar H and tech
-            df = df[(df['H'] > H_obs*0.5) & (df['H'] < H_obs*1.5)]
+            df = df[(df['H'] > H_obs*0.5) & (df['H'] < H_obs*3)]
             df = df[df['tech'] == tech_obs]
             df = df[~np.in1d(df.index.values, list_duplicat)] # remove if index in duplicat
             # print('df index values:', df.index.values)
