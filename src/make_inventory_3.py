@@ -297,8 +297,8 @@ DS5 = abs(S1_dist[idx_ES15] - S1_dist[idx_ES15p])
         
 # Horizontal distance between Lan3 and lights fixture
 d1  = np.full(len(D1), 0)
-d3  = D3 * (EV3p/EV3)**(1/3) / np.sqrt(1 - (EV3p/EV3**(2/3)) )  # (Eq. 27)
-d5  = D5 * (EV5p/EV5)**(1/3) / np.sqrt(1 - (EV5p/EV5**(2/3)) )  # (Eq. 27)
+d3  = (D3 * (EV3p/EV3)**(1/3)) / (np.sqrt(1 - (EV3p/EV3**(2/3)) ))  # (Eq. 27)
+d5  = (D5 * (EV5p/EV5)**(1/3)) / (np.sqrt(1 - (EV5p/EV5**(2/3)) ))  # (Eq. 27)
 
 dS3 = DS3 / np.sqrt( ( (EVS13/EVS13p)**(2/3) * \
                      ( ((EVS13/EVS31)**2) +1) ) \
@@ -310,7 +310,7 @@ dS5 = DS5 / np.sqrt( ( (EVS15/EVS15p)**(2/3) * \
  
 
 # Light fixture height.
-H1    = (D1 * (EV1p/EV1**(1/3)) / np.sqrt(1 - ((EV1p/EV1)**(2/3))) ) + h  # (Eq. 21)
+H1    = (D1 * ((EV1p/EV1)**(1/3)) / np.sqrt(1 - ((EV1p/EV1)**(2/3))) ) + h  # (Eq. 21)
 H3    = np.full(len(D3), h)  # lights with same hights as Lan3
 H5    = np.full(len(D5), h)  # lights with same hights as Lan3
 HS3 = dS3 * (EVS13/EVS31) + h  # (Eq. 15)
@@ -365,10 +365,10 @@ lon_prime = lon_prime.values
 delta_lon = (lon_prime - lon_peak) * out
 delta_lat = (lat_prime - lat_peak) * out
 
-vec_x = delta_lon * np.sin(lat_peak) /  \
-        np.sqrt( (delta_lon*np.sin(lat_peak))**2  + (delta_lat)**2 )  # (eq 33)
+vec_x = delta_lon * np.cos(lat_peak*(np.pi/180)) /  \
+        np.sqrt( (delta_lon*np.cos(lat_peak*(np.pi/180)))**2  + (delta_lat)**2 )  # (eq 33)
 
-vec_y = delta_lat / np.sqrt( (delta_lon*np.sin(lat_peak))**2  + (delta_lat)**2 ) # (eq 34)
+vec_y = delta_lat / np.sqrt( (delta_lon*np.cos(lat_peak*(np.pi/180)))**2  + (delta_lat)**2 ) # (eq 34)
 
 epsilon = np.copy(side)
 epsilon[epsilon == 'right'] = -np.pi/2
@@ -386,7 +386,7 @@ xl = (d * vec_xl)  # (eq 37)
 yl = (d * vec_yl)  # (eq 38)
 
 lat_lights = ((180 * yl) / (np.pi*6373000)) + lat_peak # (eq 39)
-lon_lights = ((180 * xl) / (np.pi*6373000*np.sin(lat_peak))) + lon_peak # (eq 40)
+lon_lights = ((180 * xl) / (np.pi*6373000*np.cos(lat_peak*(np.pi/180)))) + lon_peak # (eq 40)
 
 
 
@@ -425,10 +425,10 @@ update_H, lat, lon = find_close_lights(df, df_invent, nb=10)
 update_H = np.array(update_H)
 update_H[np.isnan(update_H)] = 10
 
-lat = np.concatenate( lat, axis=0 )
-lon = np.concatenate( lon, axis=0 )
-df_latlon = pd.DataFrame({'lat':lat, 'lon':lon})
-df_latlon.to_csv('latlon_close.csv')
+# lat = np.concatenate( lat, axis=0 )
+# lon = np.concatenate( lon, axis=0 )
+# df_latlon = pd.DataFrame({'lat':lat, 'lon':lon})
+# df_latlon.to_csv('latlon_close.csv')
 df_invent['H'].iloc[df.index.values] = update_H
 
 
@@ -467,13 +467,23 @@ df_invent = df_invent[df_invent['flux'] > 250].reset_index(drop=True)
 
 
 # Filter multiple detections of the same light
-df_invent = filter_multip_detections(df_invent)
+prec_localisation = 24
 
+df_invent_side = df_invent[df_invent['H'] == 2]
+df_invent_side = filter_multip_detections( df_invent_side.reset_index(drop=True),
+                                          prec_localisation)
+
+# Merge all point together
+df_invent_top = df_invent[df_invent['H'] != 2]
+df_invent_top = filter_multip_detections( df_invent_top.reset_index(drop=True),
+                                         prec_localisation)
+
+# Combine both dataframe
+df_invent = pd.concat([df_invent_side, df_invent_top])
 
 
 df_invent.to_csv(f'inventaires/lan3_invent_{filename}', index=False)
 print('Done.')
-
 
 
 # ************************************
