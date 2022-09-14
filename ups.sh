@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #GPIO17 (input) used to read current power status. 
 #0 - normal (or battery power switched on manually). 
