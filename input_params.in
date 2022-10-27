@@ -1,0 +1,6 @@
+# input parameters
+PATH_DATAS : '.'
+filename: '2022-02-07-08.csv'
+h: 2       # Lancube height
+K: 1       # K Factor
+prec_localisation: 24

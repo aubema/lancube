@@ -10,11 +10,11 @@ import matplotlib.pyplot as plt
 from scipy.signal import find_peaks
 from scipy.ndimage import gaussian_filter1d
 from cleaning_data import *
+#from src.gaussian_filter import *
 from lights_distance import *
 import warnings
 import datetime
 import yaml
-
 warnings.filterwarnings("ignore",category=RuntimeWarning)
 pd.options.mode.chained_assignment = None
 
@@ -28,7 +28,6 @@ filename = p['filename']
 h = p['h']
 K = p['K']
 prec_localisation = p['prec_localisation']
-
 
 
 # Reading Lan3 datas
@@ -53,6 +52,8 @@ df['IR'] = (df['Red_i'] + df['Blue_i'] + df['Green_i'] - df['Clear']) / 2
 
 # Cleaning dataframes
 df1, df3, df5 = cleaning_data(df)
+df_initial = pd.concat([df1, df3, df5], ignore_index=True)
+
 
 # Remove the first 10 meters of datas
 df1 = df1[df1['distance'] > 10]
@@ -63,17 +64,13 @@ df5 = df5[df5['distance'] > 10]
 df1['Value'] = gaussian_filter1d(df1['Value'].values, 0.4)
 df3['Value'] = gaussian_filter1d(df3['Value'].values, 0.4)
 df5['Value'] = gaussian_filter1d(df5['Value'].values, 0.4)
-
 # plt.figure()
 # plt.plot(df1['distance'], df1['Value'], label='S1')
 
 # Remove background contribution
-c3 = df3['Value'].rolling(window=7, center=True).min()
-c5 = df5['Value'].rolling(window=7, center=True).min()
-# plt.plot(df1['distance'], c1, label='S1')
+df3['Value'] -= df3['Value'].rolling(window=7, center=True).min()
+df5['Value'] -= df5['Value'].rolling(window=7, center=True).min()
 
-df3['Value'] -= c3
-df5['Value'] -= c5
 
 # Remove Nan values from background removal
 idx_nan = df3.loc[pd.isna(df3["Value"]), :].index.values
@@ -98,9 +95,9 @@ S5_value, S5_dist = df5['Value'].values, df5['distance'].values
 # p  : prime (value just before or after the peaks)
 
 print('Finding peaks and primes.')
-idx_peak1,  _m  = find_peaks(S1_value, distance=2, prominence=0.005, height=0.01)
-idx_peak3,  _m  = find_peaks(S3_value, distance=2, prominence=0.005, height=0.01)
-idx_peak5,  _m  = find_peaks(S5_value, distance=2, prominence=0.005, height=0.01)
+idx_peak1,  _m  = find_peaks(S1_value, distance=2, prominence=0.005, height=0.005)
+idx_peak3,  _m  = find_peaks(S3_value, distance=2, prominence=0.005, height=0.005)
+idx_peak5,  _m  = find_peaks(S5_value, distance=2, prominence=0.005, height=0.005)
 
 
 # Get peaks & traveled distance values
@@ -109,9 +106,9 @@ ED1, ED3 = df1['distance'].iloc[idx_peak1], df3['distance'].iloc[idx_peak3],
 ED5 = df5['distance'].iloc[idx_peak5]
 
 # plt.figure()
-# plt.plot(S1_dist, S1_value)
-# plt.plot(ED1, EV1, 'o')
-
+# plt.plot(S3_dist, S3_value)
+# plt.plot(ED3, EV3, 'o')
+# plt.show()
 
 
 # Checking for side peaks close to top peak
@@ -171,7 +168,6 @@ def find_prime(index_peaks, values, dist):
         idxp = np.argwhere( (dist > dist[i]+2) & (dist < dist[i]+20) ).flatten()
         idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%
         idxp = idxp[abs(values[idxp]) > abs(values[i]*0.10)] # maximal decrease of 60%   
-        # idxp = idxp[idxp > 0] 
                 
         if len(idxp > 0): # si on trouve un idx front
             idxp_front.append(idxp[0])
@@ -181,7 +177,6 @@ def find_prime(index_peaks, values, dist):
             idxp = np.argwhere((dist > dist[i]-20) & (dist < dist[i]-2) ).flatten()  
             idxp = idxp[abs(values[idxp]) < abs(values[i]*0.90)] # minimal decrease of 10%     
             idxp = idxp[abs(values[idxp]) > abs(values[i]*0.10)] # maximal decrease of 60%          
-            # idxp = idxp[idxp > 0]
 
             if len(idxp > 0): # si on trouve un idx back
                 idxp_back.append(idxp[-1])
@@ -422,24 +417,22 @@ df_invent = pd.DataFrame({
             })
 
 df_invent['h'] = h
+# df_invent.to_csv(f'lan3_invent_inter_{filename}', index=False)
 
 
-# Werid values filter
-df = df_invent[ (df_invent['flux'] > 30000) & (df_invent['H'] > 2) ]
+#& (df_invent['H'] > 4)
 
-update_H, lat, lon = find_close_lights(df, df_invent, nb=10)
+# 1- Weird values filter
+df = df_invent[ ((df_invent['flux'] > 30000) | (df_invent['H'] > 22)) & (df_invent['H'] > 4) ]
+# df.to_csv('weird_val_filter.csv')
+
+update_H, df_coord = find_close_lights(df, df_invent, nb=10)
 update_H = np.array(update_H)
 update_H[np.isnan(update_H)] = 10
-
-# lat = np.concatenate( lat, axis=0 )
-# lon = np.concatenate( lon, axis=0 )
-# df_latlon = pd.DataFrame({'lat':lat, 'lon':lon})
-# df_latlon.to_csv('latlon_close.csv')
 df_invent['H'].iloc[df.index.values] = update_H
 
-
-
 df_update = df_invent
+
 
 # Use mask only for none h height
 mask_H = df_update['H'].values > h
@@ -447,7 +440,7 @@ H_p = df_update['H'].values[mask_H]
 flux = flux[mask_H]
 H = H[mask_H]
 d = d[mask_H]
-lat_peak =lat_peak[mask_H]
+lat_peak = lat_peak[mask_H]
 lon_peak = lon_peak[mask_H]
 lat_lights = lat_lights[mask_H]
 lon_lights = lon_lights[mask_H]
@@ -466,41 +459,37 @@ df_invent.loc[mask_H, 'lon_lights'] = lon_lights_p
 df_invent.loc[mask_H, 'd'] = d_p
 df_invent.loc[mask_H, 'flux'] = flux_p
 df_invent = df_invent.reset_index(drop=True)
+# df_invent.to_csv('1_df_weird_val_filter.csv')
 
 
-# Filter to small flux
+
+# Filter small flux
 df_invent = df_invent[df_invent['flux'] > 250].reset_index(drop=True)
+# df_invent.to_csv('2_df_small_flux_filter.csv')
 
 
 # Filter multiple detections of the same light
-df_invent_side = df_invent[df_invent['H'] == 2]
-df_invent_side = filter_multip_detections( df_invent_side.reset_index(drop=True),
-                                          prec_localisation)
+df_invent = filter_multip_detections(df_invent, df_initial, prec_localisation)
+# df_coord.to_csv('coord_multiple_detec.csv')
+# df_invent.to_csv('3_df_multiple_detection.csv')
 
-# Merge all point together
-df_invent_top = df_invent[df_invent['H'] != 2]
-df_invent_top = filter_multip_detections( df_invent_top.reset_index(drop=True),
-                                         prec_localisation)
-
-# Combine both dataframe
-df_invent = pd.concat([df_invent_side, df_invent_top])
+# Re-apply filter multip detection a second time
+df_invent = filter_multip_detections(df_invent, df_initial, prec_localisation=12,
+                                               condition_side=False)
+# df_coord.to_csv('coord_multiple_detec.csv')
+# df_invent.to_csv('3.1_df_multiple_detection.csv')
 
 
-# Remove high Flux corresponding to projectors
-df_invent = df_invent[df_invent['flux'] < 50000]
+
+# Remove 2m HPS lights close to high lights
+df_small = df_invent[df_invent['H'] == h].reset_index(drop=True)
+df_small, df_coord = filter_small(df_small, df_invent, prec_localisation)
+df_invent = pd.concat([df_small, df_invent[df_invent['H'] != h]]).reset_index(drop=True)
+# df_coord.to_csv('coord_small_removed.csv')
+# df_invent.to_csv('4_df_filter_small.csv')
 
 
+# Final Inventory
 df_invent.to_csv(f'lan3_invent_{filename}', index=False)
+
 print('Done.')
-
-
-# ************************************
-#             Graphiques
-# ************************************
-
-# plt.plot(df1['Traveled Distance'], df1['Value'], label='S1')
-# plt.plot(df35['Distance'], df35['Value'], label='S3-S5')
-# ED1_all = np.concatenate([ED1, EDS1])
-# EV1_all = np.concatenate([EV1, EVS1])
-# ED1p_all = np.concatenate([ED1p, EDS1p])
-# EV1p_all = np.concatenate([EV1p, EVS1p])
