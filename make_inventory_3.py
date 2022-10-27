@@ -473,8 +473,6 @@ df_invent = df_invent[df_invent['flux'] > 250].reset_index(drop=True)
 
 
 # Filter multiple detections of the same light
-prec_localisation = 24
-
 df_invent_side = df_invent[df_invent['H'] == 2]
 df_invent_side = filter_multip_detections( df_invent_side.reset_index(drop=True),
                                           prec_localisation)
@@ -488,7 +486,7 @@ df_invent_top = filter_multip_detections( df_invent_top.reset_index(drop=True),
 df_invent = pd.concat([df_invent_side, df_invent_top])
 
 
-# Remove high Flux
+# Remove high Flux corresponding to projectors
 df_invent = df_invent[df_invent['flux'] < 50000]
 
 
