@@ -6,8 +6,8 @@ LANcube instrument software
 <img src="lan3v2.png" width="250">
 
 ## Getting started with the Lancube
-* Build your own lancube: [guide](https://lx02.cegepsherbrooke.qc.ca/~aubema/index.php/Prof/LAN3v2-technical).
-* Install the software system on a physical Lancube please refer to this [guide](https://lx02.cegepsherbrooke.qc.ca/~aubema/index.php/Prof/LAN3v2-technical).
+* Build your own lancube: [guide](http://57.134.100.114:2080/wiki/index.php/Prof/LAN3v2-users-manual).
+* Install the software system on a physical Lancube please refer to this [guide](http://57.134.100.114:2080/wiki/index.php/Prof/LAN3v2-technical).
 
 
 
@@ -38,4 +38,4 @@ For further details on the script execution and the calculations performs, pleas
 
 
 ### Support
-For any question please refer to this guide: https://lx02.cegepsherbrooke.qc.ca/~aubema/index.php/Prof/Page
+For any question please refer to this guide: http://57.134.100.114:2080/wiki/index.php/Prof/LAN3v2-users-manual
