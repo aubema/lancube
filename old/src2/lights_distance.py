@@ -40,7 +40,7 @@ def find_close_lights(df, df_invent, nb=10, h=2):
         df = df_invent.iloc[idx_dist]
         
         # on considere lights seulement > 4m
-        update_H.append( df['H'][(df['H'] > 4) & (df['flux'] < 30000) & (df['H'] < 22) ].mean() )
+        update_H.append( df['H'][(df['H'] > 4) & (df['flux'] < 30000)].mean() )
             
         df_coord = pd.DataFrame({'lat':lat, 'lon':lon})
         
@@ -68,6 +68,7 @@ def bearing_calculation(lat1, lon1, lat2, lon2):
 
 def filter_multip_detections(df_invent, df_initial, prec_localisation, condition_side=True):
 
+    lat, lon = [], []
     list_duplicat = []
     theta_min = (prec_localisation * 180) / (np.pi * 6373000)  # Limite par le GPS
     
@@ -86,14 +87,10 @@ def filter_multip_detections(df_invent, df_initial, prec_localisation, condition
                                  (df_initial['Time'] > time_point-pd.Timedelta(5,'seconds'))]
         df_time_rng.sort_values(by='Time') # sort pour etre chronologique
         
-        if len(df_time_rng) > 0:
-            lat1, lon1 = df_time_rng['lat'].iloc[0], df_time_rng['lon'].iloc[0] #pos 5sec avant
-            lat2, lon2 = df_corresp['lat'].iloc[0], df_corresp['lon'].iloc[0]
-            # compute bearing between pts
-            arr_brng[j] = bearing_calculation(lat1, lon1, lat2, lon2)
+        lat1, lon1 = df_time_rng['lat'].iloc[0], df_time_rng['lon'].iloc[0] #position 5sec avant
+        lat2, lon2 = df_corresp['lat'].iloc[0], df_corresp['lon'].iloc[0]
         
-        else: # no data found 5 sec interval
-            arr_brng[j] = 0
+        arr_brng[j] = bearing_calculation(lat1, lon1, lat2, lon2)
         
     df_invent['bearing'] = arr_brng
     
@@ -124,13 +121,12 @@ def filter_multip_detections(df_invent, df_initial, prec_localisation, condition
             idx_dist = np.argwhere(arr_dist < theta_min).flatten()
             df = df_invent.iloc[idx_dist]  
             
-# desactive car il semble qu on doive parfois merger les lampes de hauteur tres differentes            
+            
             # Look for similar H and tech
-#            if condition_side:
-#                df = df[(df['H'] > H_obs*0.5) & (df['H'] < H_obs*3)]
-#               	 df = df[df['H'] > 4]
-#            else:
-#                df = df[(df['H'] > H_obs*0.75) & (df['H'] < H_obs*1.25)]
+            if condition_side:
+                df = df[(df['H'] > H_obs*0.5) & (df['H'] < H_obs*3)]
+            else:
+                df = df[(df['H'] > H_obs*0.75) & (df['H'] < H_obs*1.25)]
 
 
             df = df[df['tech'] == tech_obs]
@@ -142,44 +138,42 @@ def filter_multip_detections(df_invent, df_initial, prec_localisation, condition
                 idx_filter = []
                 for j in range(len(df)):
                     timediff = abs(df['time'].iloc[j] - df_invent['time'].iloc[i])
-                    if timediff.seconds >= 20:
+                    if timediff.seconds >= 60:
                         idx_filter.append(j)
-                df_time = df.iloc[idx_filter]  # keep lights with time > 20s
+                df_time = df.iloc[idx_filter]  # keep lights with time > 60s
                 
             else:
                 df_time = df
 
             df = pd.concat([df_original, df_time]) # concat init obs. and other with time > 60s
             
-# cette partie est problematique car on se rend compte qu'en considerant l'incertitude
-# du gps et le fait qu'on puisse rouler sur une voie ou l'autre on peut detecter deux luminaires
-# sur des cote differents alors qu'il sont du meme cote.  
-#          
-#            Regarder orientation des vecteurs deplacement
-#            if condition_side == True:
-#                if len(df) > 1:
-#                                
-#                    direction_opo = np.zeros(len(df), dtype=bool)
-#                    diff_bearing = np.abs(df['bearing'].values - bearing_obs)
-#                   
-#                    idx_opo = np.argwhere(diff_bearing > 90)  
-#                    direction_opo[idx_opo] = True
-#                            
-#
-#                    # Check side of detection (different than the original)
-#                    # df = df.reset_index(drop=True)
-#                    idx_to_delete = []
-#                    for idx, j in enumerate(df.index.values):
-#                        
-#                        if direction_opo[idx] == True:                        
-#                            if df.iloc[idx]['side'] == side_obs:
-#                                idx_to_delete.append(j)                              
-#                        else:
-#                            if df.iloc[idx]['side'] != side_obs:
-#                                idx_to_delete.append(j)
-#                    
-#                    df = df.drop(idx_to_delete)
+            
+            # Regarder orientation des vecteurs deplacement
+            if condition_side == True:
+                if len(df) > 1:
+                                
+                    direction_opo = np.zeros(len(df), dtype=bool)
+                    diff_bearing = np.abs(df['bearing'].values - bearing_obs)
+                    
+                    idx_opo = np.argwhere(diff_bearing > 90)  
+                    direction_opo[idx_opo] = True
+                            
+
+                    # Check side of detection (different than the original)
+                    # df = df.reset_index(drop=True)
+                    idx_to_delete = []
+                    for idx, j in enumerate(df.index.values):
+                        
+                        if direction_opo[idx] == True:                        
+                            if df.iloc[idx]['side'] == side_obs:
+                                idx_to_delete.append(j)                              
+                        else:
+                            if df.iloc[idx]['side'] != side_obs:
+                                idx_to_delete.append(j)
+                    
+                    df = df.drop(idx_to_delete)
                 
+
      
             # Average the lights caract
             df_invent['H'].iloc[i] = df['H'].mean()
