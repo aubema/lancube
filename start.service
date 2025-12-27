@@ -1,5 +1,5 @@
 [Unit]
-Description=LAN3V2 main script
+Description=LAN3V3 main script
 After=network.target
 
 [Service]
@@ -7,7 +7,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=root
-ExecStart=python3 /usr/local/bin/lan3v2.py
+ExecStart=python3 /usr/local/bin/lan3v3.py
 
 [Install]
 WantedBy=multi-user.target
