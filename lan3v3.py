@@ -743,20 +743,17 @@ while end == 0:
             ATS[a] = corr['c_at']
             WTS[a] = corr['c_wt']
 
-        if tail[0] != "OK" or tail[1] != "OK" or tail[2] != "OK" or tail[3] != "OK" or tail[4] != "OK":
+        if tail[0] == "ER" or tail[1] == "ER" or tail[2] == "ER" or tail[3] == "ER" or tail[4] == "ER":
             whiteOff()
-            if nbSats > 3:
-               blueOn()
-            else:
-               blueOn()
-               redOn()
+            redOn()
 
-            
-        elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats <= 3:
+        elif tail[0] == "OK" or tail[1] == "OK" or tail[2] == "OK" or tail[3] == "OK" or tail[4] == "OK" and nbSats <= 3:
             whiteOff()
-            yellowOn()
- 
-        elif tail[0] == "OK" and tail[1] == "OK" and tail[2] == "OK" and tail[3] == "OK" and tail[4] == "OK" and nbSats > 3:
+            greenOn()
+            time.sleep(0.5)
+            whiteOff()
+            time.sleep(0.5)
+        elif tail[0] == "OK" or tail[1] == "OK" or tail[2] == "OK" or tail[3] == "OK" or tail[4] == "OK" and nbSats > 3:
             whiteOff()
             greenOn()
  
@@ -766,10 +763,13 @@ while end == 0:
     elif button_status == 0:
         print("IDLE...")
         whiteOff()
-        yellowOn()
-        time.sleep(0.5)
-        whiteOff()
-        time.sleep(0.5)
+        if nbSats > 3:
+           blueOn()
+        else:
+           blueOn()
+           time.sleep(0.5)
+           whiteOff()
+           time.sleep(0.5)
 
     elif button_status == 2:
         end = 1
