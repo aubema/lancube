@@ -683,6 +683,7 @@ nbSats = 0
 times = [0, 0]
 gpsdate = ["2000-01-01", "2000-01-01"]
 gpstime = ["00:00:00", "00:00:00"]
+full_datetime_utc = ["2000-01-01 00:00:00", "2000-01-01 00:00:00"]
 
 # Gps thread initialisation
 tGps = threading.Thread(target=getPositionData, name="Gps thread")
