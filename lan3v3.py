@@ -791,11 +791,7 @@ while end == 0:
 print("Shutdown")
 whiteOff()
 redOn()
-time.sleep(0.2)
-redOn()
-time.sleep(0.2)
-redOn()
-time.sleep(0.2)
+time.sleep(1)
 data.close()
 # Waiting for the treads to end before cleaning GPIO
 time.sleep(1)
