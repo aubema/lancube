@@ -631,6 +631,8 @@ def getPositionData():
 # LED
 whiteOff()
 whiteOn()
+time.sleep(0.5)
+whiteOff()
 
 # name of the file
 name1 = name()
@@ -771,6 +773,8 @@ while end == 0:
         if tail[0] == "ER" or tail[1] == "ER" or tail[2] == "ER" or tail[3] == "ER" or tail[4] == "ER":
             whiteOff()
             redOn()
+            time.sleep(0.1)
+            whiteOff()
 
         elif nbSats <= 3:
             whiteOff()
