@@ -681,6 +681,8 @@ lon = [0, 0]
 alt = [0, 0]
 nbSats = 0
 times = [0, 0]
+gpsdate = ["2000-01-01", "2000-01-01"]
+gpstime = ["00:00:00", "00:00:00"]
 
 # Gps thread initialisation
 tGps = threading.Thread(target=getPositionData, name="Gps thread")
