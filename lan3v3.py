@@ -527,9 +527,6 @@ def getPositionData():
     global alt
     global nbSats
     global times
-    global gpsdate
-    global gpstime
-    global full_datetime_utc
 
     SERIAL_PORT = "/dev/ttyACM0"
     try:
@@ -569,30 +566,18 @@ def getPositionData():
                     lon[1] = 0
                     alt[1] = 0
                     nbSats = 0
-                    gpsdate[0] = "2000-01-01"
-                    gpstime[0] = "00:00:00"
-                    full_datetime_utc[0] = "2000-01-01 00:00:00"
-                    gpsdate[1] = "2000-01-01"
-                    gpstime[1] = "00:00:00"
-                    full_datetime_utc[1] = "2000-01-01 00:00:00"                    
+                  
                 else:
                     # Get the position data that was transmitted with the GPGGA message
                     lat[0] = lat[1]
                     lon[0] = lon[1]
                     alt[0] = alt[1]
-                    gpsdate[0] = gpsdate[1]
-                    gpstime[0] = gpstime[1]
-                    full_datetime_utc[0] = full_datetime_utc[1]
 
                     lat[1] = float("{:.6f}".format(parts.latitude))
                     lon[1] = float("{:.6f}".format(parts.longitude))
                     alt[1] = float("{:.6f}".format(parts.altitude))
                     nbSats = int(parts.num_sats)
-                    gpsdate[1] = parts.datestamp
-                    gpstime[1] = parts.timestamp
-                    full_datetime_utc = datetime.datetime.combine(parts.datestamp, parts.timestamp)
-                    return full_datetime_utc.strftime("%Y-%m-%d %H:%M:%S UTC")
-                print(full_datetime_utc)
+
             else:
                 # Handle other NMEA messages and unsupported strings
                 pass
@@ -607,12 +592,6 @@ def getPositionData():
             lon[1] = 0
             alt[1] = 0
             nbSats = 0
-            gpsdate[0] = "2000-01-01"
-            gpstime[0] = "00:00:00"
-            full_datetime_utc[0] = "2000-01-01 00:00:00"           
-            gpsdate[1] = "2000-01-01"
-            gpstime[1] = "00:00:00"
-            full_datetime_utc[1] = "2000-01-01 00:00:00"
             
             time.sleep(0.9)
             try:
