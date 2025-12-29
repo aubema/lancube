@@ -631,7 +631,7 @@ def getPositionData():
 # LED
 whiteOff()
 whiteOn()
-time.sleep(1)
+time.sleep(2)
 whiteOff()
 
 # name of the file
