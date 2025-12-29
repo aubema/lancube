@@ -569,9 +569,9 @@ def getPositionData():
                     lon[1] = 0
                     alt[1] = 0
                     nbSats = 0
-                    gpsdate[1] = 0
-                    gpstime[1] = 0
-                    full_datetime_utc[1] = 0
+                    gpsdate[1] = "2000-01-01"
+                    gpstime[1] = "00:00:00"
+                    full_datetime_utc[1] = "2000-01-01 00:00:00"
                 else:
                     # Get the position data that was transmitted with the GPGGA message
                     lat[0] = lat[1]
