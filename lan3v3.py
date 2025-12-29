@@ -589,7 +589,7 @@ def getPositionData():
                     gpstime[1] = parts.timestamp
                     full_datetime_utc = datetime.datetime.combine(parts.datestamp, parts.timestamp)
                     return full_datetime_utc.strftime("%Y-%m-%d %H:%M:%S UTC")
-                    print(full_datetime_utc)
+                print(full_datetime_utc)
             else:
                 # Handle other NMEA messages and unsupported strings
                 pass
