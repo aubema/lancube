@@ -604,7 +604,13 @@ def getPositionData():
             lon[1] = 0
             alt[1] = 0
             nbSats = 0
-
+            gpsdate[0] = "2000-01-01"
+            gpstime[0] = "00:00:00"
+            full_datetime_utc[0] = "2000-01-01 00:00:00"           
+            gpsdate[1] = "2000-01-01"
+            gpstime[1] = "00:00:00"
+            full_datetime_utc[1] = "2000-01-01 00:00:00"
+            
             time.sleep(0.9)
             try:
                 if SERIAL_PORT == "/dev/ttyACM0":
@@ -621,7 +627,7 @@ def getPositionData():
 # initialisation
 # LED
 whiteOff()
-yellowOn()
+whiteOn()
 
 # name of the file
 name1 = name()
@@ -785,6 +791,11 @@ while end == 0:
 print("Shutdown")
 whiteOff()
 redOn()
+time.sleep(0.2)
+redOn()
+time.sleep(0.2)
+redOn()
+time.sleep(0.2)
 data.close()
 # Waiting for the treads to end before cleaning GPIO
 time.sleep(1)
