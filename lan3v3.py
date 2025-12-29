@@ -789,7 +789,7 @@ while end == 0:
     elif button_status == 0:
         print("IDLE...")
         whiteOff()
-        redOn()
+        whiteOn()
         time.sleep(0.5)
         whiteOff()
         time.sleep(0.5)
