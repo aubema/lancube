@@ -747,13 +747,10 @@ while end == 0:
             whiteOff()
             redOn()
 
-        elif tail[0] == "OK" or tail[1] == "OK" or tail[2] == "OK" or tail[3] == "OK" or tail[4] == "OK" and nbSats <= 3:
+        elif nbSats <= 3:
             whiteOff()
-            greenOn()
-            time.sleep(0.5)
-            whiteOff()
-            time.sleep(0.5)
-        elif tail[0] == "OK" or tail[1] == "OK" or tail[2] == "OK" or tail[3] == "OK" or tail[4] == "OK" and nbSats > 3:
+            blueOn()
+        elif nbSats > 3:
             whiteOff()
             greenOn()
  
@@ -763,13 +760,10 @@ while end == 0:
     elif button_status == 0:
         print("IDLE...")
         whiteOff()
-        if nbSats > 3:
-           blueOn()
-        else:
-           blueOn()
-           time.sleep(0.5)
-           whiteOff()
-           time.sleep(0.5)
+        redOn()
+        time.sleep(0.5)
+        whiteOff()
+        time.sleep(0.5)
 
     elif button_status == 2:
         end = 1
