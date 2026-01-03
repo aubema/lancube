@@ -438,8 +438,6 @@ GPIO.setup(redPin, GPIO.OUT)
 GPIO.setup(greenPin, GPIO.OUT)
 GPIO.setup(bluePin, GPIO.OUT)
 
-# UPS gpio setup
-# GPIO.setup(11, GPIO.IN)
 
 # All colors LED functions
 
@@ -496,26 +494,6 @@ def whiteOff():
     turnOff(redPin)
     turnOff(greenPin)
     turnOff(bluePin)
-
-# UPS hat shutting down after 60 sec without power
-
-
-def ups():
-    global end
-
-    while end == 0:
-        if GPIO.input(11) == 1:
-            print("WARNING, Lancube has no more power, shutting down in 60 sec if power is not recovered")
-
-            for i in range(60):
-                if GPIO.input(11) == 1 and i == 59:
-                    end = 1
-                elif GPIO.input(11) == 0:
-                    print("Power correctly recovered, lancube not shutting down")
-                    break
-                else:
-                    print("waiting for power recovery...")
-                    time.sleep(1)
 
 # Get gps position and gps time
 
@@ -669,8 +647,6 @@ full_datetime_utc = ["2000-01-01 00:00:00", "2000-01-01 00:00:00"]
 # Gps thread initialisation
 tGps = threading.Thread(target=getPositionData, name="Gps thread")
 tGps.start()
-# tUps = threading.Thread(target=ups, name="Ups thread")
-# tUps.start()
 
 # Main loop
 while end == 0:
