@@ -583,8 +583,113 @@ def getPositionData():
             except serial.SerialException:
                 print("No GPS module found...")
 
+def reset_gps_usb(port="/dev/ttyACM0"):
+    """
+    Réinitialise le GPS via reset USB logiciel.
+    Élimine les états incohérents du récepteur entre les sessions.
+ 
+    À appeler UNE SEULE FOIS au tout début du script,
+    avant wait_for_gps_fix() et avant getPositionData().
+ 
+    Retourne True si le reset a réussi, False sinon.
+    """
+    print("[GPS] Réinitialisation USB en cours...")
+ 
+    # ── Étape 1 : Trouver le GPS dans lsusb ──────────────────────────
+    try:
+        result = subprocess.run(["lsusb"], capture_output=True, text=True)
+        bus    = None
+        device = None
+ 
+        for ligne in result.stdout.splitlines():
+            if "1546" in ligne or "u-blox" in ligne.lower():
+                parts  = ligne.split()
+                bus    = parts[1].zfill(3)
+                device = parts[3].replace(":", "").zfill(3)
+                print(f"[GPS] GPS trouvé : Bus {bus}, Device {device}")
+                break
+ 
+        if bus is None:
+            print("[GPS] GPS non trouvé dans lsusb.")
+            print("[GPS] Vérifiez que le GPS est branché dans un port USB noir (USB 2.0).")
+            return False
+ 
+    except Exception as e:
+        print(f"[GPS] Erreur lors de la détection USB : {e}")
+        return False
+ 
+    # ── Étape 2 : Reset USB via ioctl ────────────────────────────────
+    usb_path = f"/dev/bus/usb/{bus}/{device}"
+    try:
+        import fcntl
+        USBDEVFS_RESET = 0x5514
+        with open(usb_path, "wb") as f:
+            fcntl.ioctl(f, USBDEVFS_RESET, 0)
+        print(f"[GPS] Reset USB effectué sur {usb_path}")
+ 
+    except Exception as e:
+        print(f"[GPS] Reset USB via ioctl échoué : {e}")
+        print("[GPS] Tentative via unbind/rebind USB...")
+ 
+        # ── Plan B : unbind/rebind du driver USB ─────────────────────
+        try:
+            result2 = subprocess.run(
+                ["find", "/sys/bus/usb/devices", "-name", "idVendor"],
+                capture_output=True, text=True
+            )
+            rebind_ok = False
+            for chemin in result2.stdout.splitlines():
+                try:
+                    with open(chemin) as f:
+                        if f.read().strip() == "1546":
+                            sysfs_path = os.path.dirname(chemin)
+                            device_id  = os.path.basename(sysfs_path)
+                            unbind     = "/sys/bus/usb/drivers/usb/unbind"
+                            rebind_path = "/sys/bus/usb/drivers/usb/bind"
+                            subprocess.run(
+                                f"echo {device_id} | sudo tee {unbind}",
+                                shell=True, capture_output=True
+                            )
+                            time.sleep(1)
+                            subprocess.run(
+                                f"echo {device_id} | sudo tee {rebind_path}",
+                                shell=True, capture_output=True
+                            )
+                            print(f"[GPS] Rebind USB effectué pour {device_id}")
+                            rebind_ok = True
+                            break
+                except Exception:
+                    continue
+ 
+            if not rebind_ok:
+                print("[GPS] Rebind USB échoué.")
+                print("[GPS] Continuation sans reset — fix pourrait être lent.")
+                return False
+ 
+        except Exception as e2:
+            print(f"[GPS] Toutes les méthodes de reset ont échoué : {e2}")
+            return False
+ 
+    # ── Étape 3 : Attendre que le port série réapparaisse ────────────
+    print(f"[GPS] Attente que {port} soit disponible...")
+    for tentative in range(10):
+        if os.path.exists(port):
+            print(f"[GPS] Port {port} disponible. Reset terminé avec succès.")
+            return True
+        print(f"[GPS] Attente... ({tentative + 1}/10)")
+        time.sleep(1)
+ 
+    print(f"[GPS] Port {port} non disponible après reset.")
+    return False
+# ------- Fin def reset gps -----------------------------------------------------------
 
-# initialisation
+
+
+
+# initialisation ============================
+reset_gps_usb(port=SERIAL_PORT)
+time.sleep(2)               # laisse le port se stabiliser
+
 # LED
 whiteOff()
 whiteOn()
