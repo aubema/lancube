@@ -687,7 +687,7 @@ def reset_gps_usb(port="/dev/ttyACM0"):
 
 
 # initialisation ============================
-reset_gps_usb(port=SERIAL_PORT)
+reset_gps_usb(port=/dev/ttyACM0)
 time.sleep(2)               # laisse le port se stabiliser
 
 # LED
